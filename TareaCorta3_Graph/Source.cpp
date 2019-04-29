@@ -11,6 +11,8 @@
 #include <FL/Fl_Progress.H>
 #include <vector>
 #include <iostream>
+#include "ArbolRN.h"
+#include "Permutacion.h"
 
 
 typedef struct Nodo*enlace;
@@ -21,6 +23,7 @@ Fl_Button *Correr;
 Fl_Button *Limpiar;
 Fl_Button *Salir;
 Fl_Input *entradaNum;
+link arbol = nullptr;
 
 
 
@@ -66,14 +69,27 @@ public:
 //							"80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99"};
 ////const char * Letras[26] = { "a","b","c","d","e","f","g","h","i","j","k","l","m",
 //							"n","o","p","q","r","s","t","u","v","w","x","y","z" };
-///Direcciones iniciales de todos los nodos
-Direccion Direccionesx[31];
-Direccion Niveles[28];
+///Direcciones en x y niveles de los nodos en y
+Direccion Direccionesx[44];
+Direccion Niveles[20];
 
+void llenarDirecciones() {
+	int cont = 0, x = 35, y = 65;
+	while (cont < 44) {
+		Direccionesx[cont].dir = x;
+		cont++;
+		x += 23;
+	}
+	cont = 0;
+	while (cont < 20) {
+		Niveles[cont].dir = y;
+		y += 30;
+		cont++;
+	}
+}
 
-///Contiene las direcciones de salida de todos los nodos
+//Contiene las direcciones de salida de todos los nodos
 //EspacioVV CorVerticales[28];
-
 //void ponerFalsos() {
 //	for (int i = 0; i < 7; i++) {
 //		Verticales[i].Lin1 = false;
@@ -503,33 +519,27 @@ public:
 		int x = 35; //Direcciones[par].x; // Sacar del arreglo direcciones x
 		//cout << x << endl;/////////////////////////////////////////////////////////
 		int y = 65; //Direcciones[par].y; // Sacar del arreglo niveles
-		int contaaaar = 0;
-		while (contaaaar < 31) {
-			fl_color(FL_BLACK);
-			double cx = x;
-			double cy = y;
-			double cc = 4;
-			while (cc > -0.5){
-				fl_circle(cx, cy, cc);
-				cc = cc - 0.5;
-			}
-
-			//fl_color(FL_RED);
-			//cx = x + 15;
-			//cy = y;
-			// cc = 4;
-			//while (cc > -0.5) {
-			//	fl_circle(cx, cy, cc);
-			//	cc = cc - 0.5;
-			//}
-			contaaaar++;
-			x += 33;
-
+		
+		fl_color(FL_BLACK);
+		double cx = x; //X
+		double cy = y; //Y
+		double cc = 7; // Radio
+		while (cc > -0.5){
+			fl_circle(cx, cy, cc);
+			cc = cc - 0.5;
 		}
-		//Circulo azul
+		fl_color(FL_RED);
+		cx = x + 15;
+		cy = y;
+			cc = 4;
+		while (cc > -0.5) {
+			fl_circle(cx, cy, cc);
+			cc = cc - 0.5;
+		}
 
 	}
 };
+
 class DrawPun : public Fl_Widget {
 public:
 	DrawPun(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) {
@@ -573,54 +583,52 @@ public:
 
 //Aqui se guardan los punteros a los nodos para saber si se pueden o se tienen que dibujar o borrar
 
-DrawPun* Punteros[28];
-DrawNodo* NodosGraficos[28];
-
-
+DrawPun* Punteros[44];
+DrawNodo* NodosGraficos[44];
 
 
 ///						Call backs						///
 
-void dibujarfinal(void * data) {
-	Fl::check();
-	Fl_Window *w = (Fl_Window*)data;
-	w->begin();
-
-	//string loco = multilinea->value();
-
-	//realizarlinea(loco);
-
-
-	//ponerFalsos();
-	////int i = 0;
-	////while(i<)
-	//for (int i = 0; i < 27; i++) {
-	//	//cout << "Valor de I ; " << i << endl;
-	//	w->remove(NodosGraficos[vnodos[i]->campo]);
-	//	w->remove(Punteros[vnodos[i]->campo]);
-	//	//w->remove(LetrasGraf[vnodos[i]->campo]);
-	//	if (vnodos[i]->v != -1) { //&& vnodos[i]->cambio == false) { // Verifica si el nodo valor -1
-	//		if (vnodos[i]->dibujadoN == false) {
-	//			cout << "DIBUJADO" << endl;
-	//			cout << "nodosgraficos[i]->campo ; " << vnodos[i]->campo + 1 << endl;
-	//			cout << "vnodos[i] ; " << vnodos[i]->v << endl;
-	//			cout << "NumNodos[x] ; " << NumNodos[vnodos[i]->v] << endl;
-	//			NodosGraficos[vnodos[i]->campo] = new DrawNodo((vnodos[i]->campo+1), 8, 0, 0, NumNodos[vnodos[i]->v]);
-	//			//vnodos[i]->dibujadoN = true;
-	//			if (vnodos[i]->sig != nullptr) {
-	//				vnodos[i]->siguienteN = vnodos[i]->sig->campo;
-	//				cout << "Yo soy el siguiente" << vnodos[i]->siguienteN << endl;
-	//				Punteros[vnodos[i]->campo] = new DrawPun(vnodos[i]->campo+1, vnodos[i]->siguienteN+1, 0, 0);
-	//				//vnodos[i]->dibujadoP = true;
-	//			}
-	//			//LetrasGraf[vnodos[i]->campo] = new DrawL((vnodos[i]->campo + 1), 8, 0, 0, Letras[definirletras(vnodos[i]->letras)]);
-	//		}
-	//	}
-	//}
-	//cout << "---------------------------------------------" << endl;
-	w->redraw();
-	w->end();
-}
+//void dibujarfinal(void * data) {
+//	Fl::check();
+//	Fl_Window *w = (Fl_Window*)data;
+//	w->begin();
+//
+//	//string loco = multilinea->value();
+//
+//	//realizarlinea(loco);
+//
+//
+//	//ponerFalsos();
+//	////int i = 0;
+//	////while(i<)
+//	//for (int i = 0; i < 27; i++) {
+//	//	//cout << "Valor de I ; " << i << endl;
+//	//	w->remove(NodosGraficos[vnodos[i]->campo]);
+//	//	w->remove(Punteros[vnodos[i]->campo]);
+//	//	//w->remove(LetrasGraf[vnodos[i]->campo]);
+//	//	if (vnodos[i]->v != -1) { //&& vnodos[i]->cambio == false) { // Verifica si el nodo valor -1
+//	//		if (vnodos[i]->dibujadoN == false) {
+//	//			cout << "DIBUJADO" << endl;
+//	//			cout << "nodosgraficos[i]->campo ; " << vnodos[i]->campo + 1 << endl;
+//	//			cout << "vnodos[i] ; " << vnodos[i]->v << endl;
+//	//			cout << "NumNodos[x] ; " << NumNodos[vnodos[i]->v] << endl;
+//	//			NodosGraficos[vnodos[i]->campo] = new DrawNodo((vnodos[i]->campo+1), 8, 0, 0, NumNodos[vnodos[i]->v]);
+//	//			//vnodos[i]->dibujadoN = true;
+//	//			if (vnodos[i]->sig != nullptr) {
+//	//				vnodos[i]->siguienteN = vnodos[i]->sig->campo;
+//	//				cout << "Yo soy el siguiente" << vnodos[i]->siguienteN << endl;
+//	//				Punteros[vnodos[i]->campo] = new DrawPun(vnodos[i]->campo+1, vnodos[i]->siguienteN+1, 0, 0);
+//	//				//vnodos[i]->dibujadoP = true;
+//	//			}
+//	//			//LetrasGraf[vnodos[i]->campo] = new DrawL((vnodos[i]->campo + 1), 8, 0, 0, Letras[definirletras(vnodos[i]->letras)]);
+//	//		}
+//	//	}
+//	//}
+//	//cout << "---------------------------------------------" << endl;
+//	w->redraw();
+//	w->end();
+//}
 
 
 void correrCb(Fl_Widget* butt, void * data) {
@@ -631,19 +639,42 @@ void correrCb(Fl_Widget* butt, void * data) {
 	//Funcion-->
 
 	//Limpia el espacio de entrada
+	const char* x = entradaNum->value();
+	int numeroM;
+	stringstream s(x);
+	s >> numeroM;
+	cout << "Numero de nodos: " << numeroM << endl;
 	entradaNum->replace(0, entradaNum->size(), NULL, 0);
 
-	//Limpia toda la pantalla ... por hacer ☼
-	//for (int i = 0; i < 28; i++) {
-	//	w->remove(NodosGraficos[i]);
-	//	//delete(NodosGraficos[i]);
-	//	w->remove(Punteros[i]);
-	//	//delete(Punteros[i]);
-	//}
+
+
+	//Limpia toda la pantalla ... por hacer ☼ ...
+	for (int i = 0; i < 44; i++) {
+		w->remove(NodosGraficos[i]);
+		//delete(NodosGraficos[i]);
+		w->remove(Punteros[i]);
+		//delete(Punteros[i]);
+	}
+
+
+	//Generando el arbol
+	int * numeros = genere(numeroM);
+	for (int i = 0; i < numeroM; i++) {
+		RBinsert(arbol, numeros[i]);
+		//cout << numeros[i] << endl;
+	}
+	cout << arbol;
 
 	//Llamar a funcion que recorre el arbol y crea los nodos de la siguiente manera
 	DrawNodo * nodo2 = new DrawNodo(8, 55, 0, 0); //Pasa el nodo actual + 1
 	
+	//Entra el valor del nodo actual+1 en X
+	//Se pregunta si hay izquierdo.... en caso de que sea 
+		//verdadero se dibuja del actual al actual-1 y nivel+1
+	//Se hace lo mismo con el derecho
+
+
+
 	//Por hacer...☼... funcion que recorra el arbol por niveles 
 	//Por hacer...☼... funcion que verifique si tiene izq y der, en caso de tenerlos, dibuje los punteros
 					 //luego de esto baje y haga lo mismo con los otros nodos
@@ -667,6 +698,7 @@ int main(int argc, char **argv) {
 	using namespace Graph_lib; 
 	using namespace std; 
 
+	llenarDirecciones();
 
 	Fl_Window window(0, 0, 1300, 700, "Dibujando Bosques");
 
@@ -697,9 +729,6 @@ int main(int argc, char **argv) {
 	//Funciones//
 	Salir->callback((Fl_Callback*)close_cb);
 	Correr.callback(correrCb,&window);//////////////////////////////
-
-
-
 
 
 	window.show();

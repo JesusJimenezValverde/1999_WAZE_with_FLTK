@@ -80,5 +80,11 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ArbolRN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Permutacion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -151,6 +151,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArbolRN.h" />
     <ClInclude Include="Enumerations.h" />
     <ClInclude Include="fltk.h" />
     <ClInclude Include="Fl_Bitmap.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Fl_Window.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="Permutacion.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="std_lib_facilities.h" />
     <ClInclude Include="Window.h" />

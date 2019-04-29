@@ -23,7 +23,7 @@ Fl_Button *Correr;
 Fl_Button *Limpiar;
 Fl_Button *Salir;
 Fl_Input *entradaNum;
-link arbol = nullptr;
+
 
 
 
@@ -71,7 +71,7 @@ public:
 //							"n","o","p","q","r","s","t","u","v","w","x","y","z" };
 ///Direcciones en x y niveles de los nodos en y
 Direccion Direccionesx[44];
-Direccion Niveles[20];
+Direccion Niveles[44];
 
 void llenarDirecciones() {
 	int cont = 0, x = 35, y = 65;
@@ -81,7 +81,7 @@ void llenarDirecciones() {
 		x += 23;
 	}
 	cont = 0;
-	while (cont < 20) {
+	while (cont < 44) {
 		Niveles[cont].dir = y;
 		y += 30;
 		cont++;
@@ -512,72 +512,66 @@ public:
 	DrawNodo(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) {
 	}
 	void draw() {
+		cout << "Dibuje el primero" << endl;
+		int par = x() - 1; // valor del nodo
+		int x = par;
+		par = y() - 1; //nivel actual
+		int y = par;
+		par = w(); //si es 1 es rojo, si es 2 es negro
 
-		fl_color(216);
-		//Rectangulo azul
-		int par = x()-1;
-		int x = 35; //Direcciones[par].x; // Sacar del arreglo direcciones x
-		//cout << x << endl;/////////////////////////////////////////////////////////
-		int y = 65; //Direcciones[par].y; // Sacar del arreglo niveles
-		
-		fl_color(FL_BLACK);
-		double cx = x; //X
-		double cy = y; //Y
-		double cc = 7; // Radio
-		while (cc > -0.5){
-			fl_circle(cx, cy, cc);
-			cc = cc - 0.5;
+		if (par == 1) {
+			fl_color(FL_RED);
+			double cx = Direccionesx[x].dir; //X
+			double cy = Niveles[y].dir; //Y
+			double cc = 4; // Radio
+			while (cc > -0.5) {
+				fl_circle(cx, cy, cc);
+				cc = cc - 0.5;
+			}
 		}
-		fl_color(FL_RED);
-		cx = x + 15;
-		cy = y;
-			cc = 4;
-		while (cc > -0.5) {
-			fl_circle(cx, cy, cc);
-			cc = cc - 0.5;
+		else {
+			fl_color(FL_BLACK);
+			double cx = Direccionesx[x].dir; //X
+			double cy = Niveles[y].dir; //Y
+			double cc = 4; // Radio
+			while (cc > -0.5) {
+				fl_circle(cx, cy, cc);
+				cc = cc - 0.5;
+			}
 		}
-
 	}
 };
 
 class DrawPun : public Fl_Widget {
 public:
-	DrawPun(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) {
+	DrawPun(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) { // salida x, llegada x, nivel act, izq/der
 	}
 	void draw() {
-		
-		// Por hacer ... ☼ ... dibuja una linea de direccion del nodo actual y el nivel
-							 //hasta la direccion del nodo izq o der y nivel+1
-		
-		
-		
-		////W y H se van a usar para identificar hacia donde va el puntero 
-		//fl_color(255);
-		//int p = x() - 1;//Direccion del nodo de inicio
-		//int u = y() - 1;//Direccion del ultimo nodo
-		////Aqui inicia la linea
-		//int x1 = DireccionesSalida[p].x;
-		//int y1 = DireccionesSalida[p].y;
-		////cout << "Guarda " << y1 << endl;
-		////Estas definen cuanto sale a la derecha
-		//int y2 = y1;
-		//int x2 = definirx2(p);
-		////cout << "x2 definido -> " << x2 << endl;
-		//fl_line(x1,y1,x2,y2);
-		////Linea vertical
-		//int y3 = definirSB(u);
-		//fl_line(x2, y2, x2, y3); ///El  que tengo que averiguar con definirSB es el ultimo de esta
-		////Linea horizontal
-		//int x3 = definirEntrada(u) - 20;
-		//fl_line(x2, y3, x3, y3);
-		////Flecha de entrada
-		//int y4 = definirFlecha(u);
-		////std::cout << y4 << endl;
-		//fl_line(x3, y3, x3, y4);
-		////punta de la flecha
-		//fl_line(x3, y4, x3 + 4, y4-4);
-		//fl_line(x3, y4, x3 - 4, y4-4);
-		////cout << y4 << endl;
+		fl_color(FL_BLACK);
+		int par = x() - 1; // valor del nodo
+		int x = par;
+		par = y() - 1; //nodo llegada
+		int y = par; 
+		par = w() - 1; //nivel actual
+		int act = par;
+		par = h();//si es 1 es izq, si es 2 es derecha
+
+		if (par == 1) {
+			double cx = Direccionesx[x].dir; //X
+			double cy = Direccionesx[y].dir; //X1
+			
+			double niv = Niveles[act].dir+4;
+
+			fl_line(cx,niv,cy,niv+23);
+		}
+		else {
+			double cx = Direccionesx[x].dir; //X
+			double cy = Direccionesx[y].dir; //X1
+
+			double niv = Niveles[act].dir+4;
+
+			fl_line(cx, niv, cy, niv + 23);
+		}
 	}
 };
 
@@ -631,6 +625,27 @@ DrawNodo* NodosGraficos[44];
 //}
 
 
+void dibujarArbol(link& p, int nivel) {
+
+	int x5 = p->v + 1, x6 = nivel + 1;
+
+	if (p->nColor == 0) { //0=rojo   1=negro
+		NodosGraficos[p->v] = new DrawNodo(x5, x6, 1, 0);
+	}
+	else {
+		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 0);
+	}
+	
+	if (p->izq) {
+		dibujarArbol(p->izq, nivel + 1);
+		Punteros[p->v] = new DrawPun(x5, p->izq->v+1, x6, 1);
+	}
+	if (p->der) {
+		dibujarArbol(p->der, nivel + 1);
+		Punteros[p->v] = new DrawPun(x5, p->der->v+1, x6, 2);
+	}
+}
+
 void correrCb(Fl_Widget* butt, void * data) {
 	butt->deactivate();
 	Fl::check();
@@ -639,9 +654,9 @@ void correrCb(Fl_Widget* butt, void * data) {
 	//Funcion-->
 
 	//Limpia el espacio de entrada
-	const char* x = entradaNum->value();
+	const char* numerito = entradaNum->value();
 	int numeroM;
-	stringstream s(x);
+	stringstream s(numerito);
 	s >> numeroM;
 	cout << "Numero de nodos: " << numeroM << endl;
 	entradaNum->replace(0, entradaNum->size(), NULL, 0);
@@ -659,25 +674,14 @@ void correrCb(Fl_Widget* butt, void * data) {
 
 	//Generando el arbol
 	int * numeros = genere(numeroM);
+	link arbol = nullptr;
 	for (int i = 0; i < numeroM; i++) {
 		RBinsert(arbol, numeros[i]);
 		//cout << numeros[i] << endl;
 	}
-	cout << arbol;
+	//NodosGraficos[arbol->v] = new DrawNodo((arbol->v + 1),1,3,0);
 
-	//Llamar a funcion que recorre el arbol y crea los nodos de la siguiente manera
-	DrawNodo * nodo2 = new DrawNodo(8, 55, 0, 0); //Pasa el nodo actual + 1
-	
-	//Entra el valor del nodo actual+1 en X
-	//Se pregunta si hay izquierdo.... en caso de que sea 
-		//verdadero se dibuja del actual al actual-1 y nivel+1
-	//Se hace lo mismo con el derecho
-
-
-
-	//Por hacer...☼... funcion que recorra el arbol por niveles 
-	//Por hacer...☼... funcion que verifique si tiene izq y der, en caso de tenerlos, dibuje los punteros
-					 //luego de esto baje y haga lo mismo con los otros nodos
+	dibujarArbol(arbol, 0); //Pasa el nodo actual + 1
 
 	//<--Funcion
 	w->redraw();

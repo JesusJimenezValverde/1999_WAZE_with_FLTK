@@ -21,7 +21,6 @@
 #define Fl_Widget_H
 
 #include "Enumerations.H"
-#include "Simple_window.h"
 
 #ifdef _WIN64
 #if defined(__GNUC__) || defined(__clang__)
@@ -45,7 +44,7 @@ typedef void (Fl_Callback0)(Fl_Widget*, void*);
 typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
 typedef void (Fl_Ca3llback0)(Fl_Widget*);
 typedef void (Fl_Callback1)(Fl_Widget*, long);
-typedef void (Fl_Callback)(Fl_Widget*, void*, Simple_window win);
+typedef void (Fl_Callback)(Fl_Widget*, void*);
 
 struct FL_EXPORT Fl_Label {
 	const char* value;
@@ -77,7 +76,7 @@ class FL_EXPORT Fl_Widget {
 	uchar damage_;
 	uchar box_;
 	uchar when_;
-	Simple_window* wind_;
+	//Simple_window* wind_;
 
 	const char *tooltip_;
 
@@ -225,11 +224,11 @@ public:
 	void tooltip(const char *text);               // see Fl_Tooltip
 	void copy_tooltip(const char *text);          // see Fl_Tooltip
 
-	void callback(Fl_Callback* cb, void* p, Simple_window* win) { callback_ = cb; user_data_ = p; wind_ = win; }
+	void callback(Fl_Callback* cb, void* p) { callback_ = cb; user_data_ = p; }
 
 	Fl_Callback_p callback() const { return callback_; }
 
-	void callback(Fl_Callback* cb, void* p) { callback_ = cb; user_data_ = p; }
+	//void callback(Fl_Callback* cb, void* p) { callback_ = cb; user_data_ = p; }
 
 	void callback(Fl_Callback* cb) { callback_ = cb; }
 

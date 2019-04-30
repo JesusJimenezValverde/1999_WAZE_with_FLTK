@@ -14,9 +14,7 @@
 #include "ArbolRN.h"
 #include "Permutacion.h"
 
-
 typedef struct Nodo*enlace;
-
 
 Fl_Button *LineaALinea;
 Fl_Button *Correr;
@@ -24,13 +22,9 @@ Fl_Button *Limpiar;
 Fl_Button *Salir;
 Fl_Input *entradaNum;
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////// Parte grafica //////////////////////////////////////////////////////////////////////////
 
-class Direccion {//(x,y)
+class Direccion {//x
 public:
 	int dir;
 };
@@ -71,22 +65,10 @@ public:
 //							"n","o","p","q","r","s","t","u","v","w","x","y","z" };
 ///Direcciones en x y niveles de los nodos en y
 Direccion Direccionesx[44];
+
 Direccion Niveles[44];
 
-void llenarDirecciones() {
-	int cont = 0, x = 35, y = 65;
-	while (cont < 44) {
-		Direccionesx[cont].dir = x;
-		cont++;
-		x += 23;
-	}
-	cont = 0;
-	while (cont < 44) {
-		Niveles[cont].dir = y;
-		y += 30;
-		cont++;
-	}
-}
+
 
 //Contiene las direcciones de salida de todos los nodos
 //EspacioVV CorVerticales[28];
@@ -578,52 +560,43 @@ public:
 //Aqui se guardan los punteros a los nodos para saber si se pueden o se tienen que dibujar o borrar
 
 DrawPun* Punteros[44];
+bool Campos[44];
+
 DrawNodo* NodosGraficos[44];
 
 
+void llenarDirecciones() {
+	int cont = 0, x = 35, y = 65;
+	while (cont < 44) {
+		Direccionesx[cont].dir = x;
+		Campos[cont] = false;
+		cont++;
+		x += 23;
+
+	}
+	cont = 0;
+	while (cont < 44) {
+		Niveles[cont].dir = y;
+		y += 30;
+		cont++;
+	}
+
+}
+
+int defNum() {
+	int cont = 0;
+	while (cont < 44) {
+		if (Campos[cont] == false) {
+			Campos[cont] = true;
+			return cont;
+		}
+		cont++;
+	}
+}
+
+
+
 ///						Call backs						///
-
-//void dibujarfinal(void * data) {
-//	Fl::check();
-//	Fl_Window *w = (Fl_Window*)data;
-//	w->begin();
-//
-//	//string loco = multilinea->value();
-//
-//	//realizarlinea(loco);
-//
-//
-//	//ponerFalsos();
-//	////int i = 0;
-//	////while(i<)
-//	//for (int i = 0; i < 27; i++) {
-//	//	//cout << "Valor de I ; " << i << endl;
-//	//	w->remove(NodosGraficos[vnodos[i]->campo]);
-//	//	w->remove(Punteros[vnodos[i]->campo]);
-//	//	//w->remove(LetrasGraf[vnodos[i]->campo]);
-//	//	if (vnodos[i]->v != -1) { //&& vnodos[i]->cambio == false) { // Verifica si el nodo valor -1
-//	//		if (vnodos[i]->dibujadoN == false) {
-//	//			cout << "DIBUJADO" << endl;
-//	//			cout << "nodosgraficos[i]->campo ; " << vnodos[i]->campo + 1 << endl;
-//	//			cout << "vnodos[i] ; " << vnodos[i]->v << endl;
-//	//			cout << "NumNodos[x] ; " << NumNodos[vnodos[i]->v] << endl;
-//	//			NodosGraficos[vnodos[i]->campo] = new DrawNodo((vnodos[i]->campo+1), 8, 0, 0, NumNodos[vnodos[i]->v]);
-//	//			//vnodos[i]->dibujadoN = true;
-//	//			if (vnodos[i]->sig != nullptr) {
-//	//				vnodos[i]->siguienteN = vnodos[i]->sig->campo;
-//	//				cout << "Yo soy el siguiente" << vnodos[i]->siguienteN << endl;
-//	//				Punteros[vnodos[i]->campo] = new DrawPun(vnodos[i]->campo+1, vnodos[i]->siguienteN+1, 0, 0);
-//	//				//vnodos[i]->dibujadoP = true;
-//	//			}
-//	//			//LetrasGraf[vnodos[i]->campo] = new DrawL((vnodos[i]->campo + 1), 8, 0, 0, Letras[definirletras(vnodos[i]->letras)]);
-//	//		}
-//	//	}
-//	//}
-//	//cout << "---------------------------------------------" << endl;
-//	w->redraw();
-//	w->end();
-//}
-
 
 void dibujarArbol(link& p, int nivel) {
 
@@ -636,15 +609,19 @@ void dibujarArbol(link& p, int nivel) {
 		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 0);
 	}
 	
+	//Nota estoy metiendo dos punteros en una misma direccion.... entonces la solucion sería que se llene el arreglo de punteros en forma ascendente.
+
+
 	if (p->izq) {
 		dibujarArbol(p->izq, nivel + 1);
-		Punteros[p->v] = new DrawPun(x5, p->izq->v+1, x6, 1);
+		Punteros[defNum()] = new DrawPun(x5, p->izq->v+1, x6, 1);
 	}
 	if (p->der) {
 		dibujarArbol(p->der, nivel + 1);
-		Punteros[p->v] = new DrawPun(x5, p->der->v+1, x6, 2);
+		Punteros[defNum()] = new DrawPun(x5, p->der->v+1, x6, 2);
 	}
 }
+
 
 void correrCb(Fl_Widget* butt, void * data) {
 	butt->deactivate();
@@ -661,14 +638,14 @@ void correrCb(Fl_Widget* butt, void * data) {
 	cout << "Numero de nodos: " << numeroM << endl;
 	entradaNum->replace(0, entradaNum->size(), NULL, 0);
 
-
-
 	//Limpia toda la pantalla ... por hacer ☼ ...
 	for (int i = 0; i < 44; i++) {
-		w->remove(NodosGraficos[i]);
-		//delete(NodosGraficos[i]);
+		//cout << "Borrando " << i << endl;
 		w->remove(Punteros[i]);
-		//delete(Punteros[i]);
+		w->remove(NodosGraficos[i]);
+		Punteros[i] = nullptr;
+		NodosGraficos[i] = nullptr;
+		Campos[i] = false;
 	}
 
 
@@ -677,7 +654,7 @@ void correrCb(Fl_Widget* butt, void * data) {
 	link arbol = nullptr;
 	for (int i = 0; i < numeroM; i++) {
 		RBinsert(arbol, numeros[i]);
-		//cout << numeros[i] << endl;
+		cout << numeros[i] << endl;
 	}
 	//NodosGraficos[arbol->v] = new DrawNodo((arbol->v + 1),1,3,0);
 
@@ -694,7 +671,6 @@ void close_cb(Fl_Widget* obj, void*)
 {
 		exit(0);
 }
-
 
 
 int main(int argc, char **argv) {

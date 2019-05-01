@@ -64,9 +64,9 @@ public:
 ////const char * Letras[26] = { "a","b","c","d","e","f","g","h","i","j","k","l","m",
 //							"n","o","p","q","r","s","t","u","v","w","x","y","z" };
 ///Direcciones en x y niveles de los nodos en y
-Direccion Direccionesx[44];
+Direccion Direccionesx[200];
 
-Direccion Niveles[44];
+Direccion Niveles[200];
 
 
 
@@ -505,7 +505,7 @@ public:
 			fl_color(FL_RED);
 			double cx = Direccionesx[x].dir; //X
 			double cy = Niveles[y].dir; //Y
-			double cc = 4; // Radio
+			double cc = 2; // Radio
 			while (cc > -0.5) {
 				fl_circle(cx, cy, cc);
 				cc = cc - 0.5;
@@ -515,7 +515,7 @@ public:
 			fl_color(FL_BLACK);
 			double cx = Direccionesx[x].dir; //X
 			double cy = Niveles[y].dir; //Y
-			double cc = 4; // Radio
+			double cc = 2; // Radio
 			while (cc > -0.5) {
 				fl_circle(cx, cy, cc);
 				cc = cc - 0.5;
@@ -542,7 +542,7 @@ public:
 			double cx = Direccionesx[x].dir; //X
 			double cy = Direccionesx[y].dir; //X1
 			
-			double niv = Niveles[act].dir+4;
+			double niv = Niveles[act].dir+2;
 
 			fl_line(cx,niv,cy,niv+23);
 		}
@@ -550,7 +550,7 @@ public:
 			double cx = Direccionesx[x].dir; //X
 			double cy = Direccionesx[y].dir; //X1
 
-			double niv = Niveles[act].dir+4;
+			double niv = Niveles[act].dir+2;
 
 			fl_line(cx, niv, cy, niv + 23);
 		}
@@ -559,19 +559,19 @@ public:
 
 //Aqui se guardan los punteros a los nodos para saber si se pueden o se tienen que dibujar o borrar
 
-DrawPun* Punteros[44];
-bool Campos[44];
+DrawPun* Punteros[200];
+bool Campos[200];
 
-DrawNodo* NodosGraficos[44];
+DrawNodo* NodosGraficos[200];
 
 
 void llenarDirecciones() {
 	int cont = 0, x = 35, y = 65;
-	while (cont < 44) {
+	while (cont < 200) {
 		Direccionesx[cont].dir = x;
 		Campos[cont] = false;
 		cont++;
-		x += 23;
+		x += 5;
 
 	}
 	cont = 0;
@@ -585,7 +585,7 @@ void llenarDirecciones() {
 
 int defNum() {
 	int cont = 0;
-	while (cont < 44) {
+	while (cont < 200) {
 		if (Campos[cont] == false) {
 			Campos[cont] = true;
 			return cont;
@@ -639,7 +639,7 @@ void correrCb(Fl_Widget* butt, void * data) {
 	entradaNum->replace(0, entradaNum->size(), NULL, 0);
 
 	//Limpia toda la pantalla ... por hacer ☼ ...
-	for (int i = 0; i < 44; i++) {
+	for (int i = 0; i < 200; i++) {
 		//cout << "Borrando " << i << endl;
 		w->remove(Punteros[i]);
 		w->remove(NodosGraficos[i]);

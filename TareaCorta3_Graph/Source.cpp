@@ -55,7 +55,6 @@ public:
 	DrawNodo(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) {
 	}
 	void draw() {
-		cout << "Dibuje el primero" << endl;
 		int par = x() - 1; // valor del nodo
 		int x = par;
 		par = y() - 1; //nivel actual
@@ -416,6 +415,7 @@ void correrCb(Fl_Widget* butt, void * data) {
 	w->begin();
 	//Funcion-->
 
+
 	//Limpia el espacio de entrada
 	const char* numerito = entradaNum->value();
 	int numeroM;
@@ -434,49 +434,50 @@ void correrCb(Fl_Widget* butt, void * data) {
 		Campos[i] = false;
 	}
 
+	if (numeroM > 0 && numeroM<=200) {
+		//Generando el arbol
+		int * numeros = genere(numeroM);
+		link arbol = nullptr;
+		string tira = "";
+		for (int i = 0; i < numeroM; i++) {
+			RBinsert(arbol, numeros[i]);
+			tira += to_string(numeros[i]);
+			tira += ",";
+		}
 
-	//Generando el arbol
-	int * numeros = genere(numeroM);
-	link arbol = nullptr;
-	string tira = "";
-	for (int i = 0; i < numeroM; i++) {
-		RBinsert(arbol, numeros[i]);
-		//cout << numeros[i] << endl;
-		tira += to_string(numeros[i]);
-		tira += ",";
-	}
-	
-	tira = tira.substr(0,tira.size()-1);
-	//cout << tira << endl;
-	const char * tirita = tira.c_str();
-	//Verifica entre que numeros se encuentra la cantidad de nodos solicitada y crea el arbol
-	//segun las direcciones dadas para esa cantidad
+		cout << arbol;
 
-	if (numeroM >= 0 && numeroM < 51) {
-		dibujarArbol3(arbol, 0);
-		buff->text(tirita);
-		//Se puede hacer un print del arreglo que se inserto al arbol
-	}
-	else if (numeroM > 50 && numeroM < 101) {
-		dibujarArbol2(arbol, 0);
-		buff->text(tirita);
-		//Se puede hacer un print del arreglo que se inserto al arbol
-	}
-	else if (numeroM > 100 && numeroM < 151) {
-		dibujarArbol1(arbol, 0);
-		buff->text(tirita);
-		//Se puede hacer un print del arreglo que se inserto al arbol
-	}
-	else if (numeroM > 150 && numeroM < 201) {
-		dibujarArbol(arbol, 0); 
-		buff->text(tirita);
-		//Se puede hacer un print del arreglo que se inserto al arbol
+		tira = tira.substr(0, tira.size() - 1);
+		const char * tirita = tira.c_str();
+
+		//Verifica entre que numeros se encuentra la cantidad de nodos solicitada y crea el arbol
+		//segun las direcciones dadas para esa cantidad
+
+		if (numeroM >= 0 && numeroM < 51) {
+			dibujarArbol3(arbol, 0);
+			buff->text(tirita);
+
+		}
+		else if (numeroM > 50 && numeroM < 101) {
+			dibujarArbol2(arbol, 0);
+			buff->text(tirita);
+
+		}
+		else if (numeroM > 100 && numeroM < 151) {
+			dibujarArbol1(arbol, 0);
+			buff->text(tirita);
+
+		}
+		else {
+			dibujarArbol(arbol, 0);
+			buff->text(tirita);
+		}
 	}
 	else {
-		cout << "Ha superado el limite de 200 nodos"<<endl;
-		buff->text("Ha superado el limite de 200 nodos");
-		// Se puede hacer un print de lo anterior
+		buff->text(" -Ha digitado un numero fuera de 1 a 200- ");
 	}
+
+	
 
 	//<--Funcion
 	w->redraw();

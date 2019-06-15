@@ -23,34 +23,12 @@
 //Fl_Button *Correr;
 //Fl_Button *Limpiar;
 //Fl_Button *Salir;
-Fl_Text_Display *salidas;
-Fl_Text_Buffer *tbuff;
-//Fl_Text_Display *disp; 
-Fl_Window *window;
-//
-//////////////////////////////////////////////////////////////////////////// Parte grafica //////////////////////////////////////////////////////////////////////////
-//
-//class Direccion {//x
-//public:
-//	int dir;
-//};
 
 
 
-////Direcciones para 50 nodos
-//Direccion Direccionesx50[50];
-//
-////Direcciones para 100 nodos
-//Direccion Direccionesx100[100];
-//
-////Direcciones para 150 nodos
-//Direccion Direccionesx150[150];
-//
-////Direcciones para 200 nodos
-//Direccion Direccionesx[200];
-//
-////Niveles generales
-//Direccion Niveles[200];
+
+
+
 
 
 class DrawNodo : public Fl_Box {
@@ -87,291 +65,38 @@ public:
 	
 	void draw() {
 		int color = x();
-		if (color == 1) {
+		if (color == 1) { //Arco normal
 			fl_color(FL_BLACK);
 			fl_line_style(FL_SOLID, 2);
 			fl_line(400, 40, 800, 40 + 21);
-			/*l_line_style(FL_DOT);*/
+			fl_line(800, 61, 800 - 5, 61 - 4);
+			fl_line(800, 61, 800 - 5, 61 + 4);
+
 		}
-		else {
+		else if (color == 2){ //Arco iluminado
 			fl_color(FL_RED);
 			fl_line_style(FL_SOLID, 2);
 			fl_line(400, 40, 800, 40 + 21);
+			fl_line(800, 61, 800 - 5, 61 - 4);
+			fl_line(800, 61, 800 - 5, 61 + 4);
 		}
-		fl_line_style(FL_SOLID, 2);
-		//punta de la flecha A LA DERECHA
-		fl_line(800, 61, 800 - 5, 61 - 4);
-		fl_line_style(FL_SOLID, 2);
-		fl_line(800, 61, 800 - 5, 61 + 4);
 
 	}
 };
 
+///// Variables Globales ////
+Fl_Text_Display *salidas;
+Fl_Text_Buffer *tbuff;
+Fl_Window *window;
+Fl_Box *CAJITAS[1001];
+linea *LINEAS[1001];
 
-
-//
-//// Nodos
-//class DrawNodo : public Fl_Widget {
-//public:
-//	DrawNodo(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) {
-//	}
-//	void draw() {
-//		int par = x() - 1; // valor del nodo
-//		int x = par;
-//		par = y() - 1; //nivel actual
-//		int y = par;
-//		par = w(); //si es 1 es rojo, si es 2 es negro
-//
-//		int tipo = h();
-//		if (tipo == 1) {// n<50
-//			if (par == 1) {
-//				fl_color(FL_RED);
-//				double cx = Direccionesx50[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 4; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//			else {
-//				fl_color(FL_BLACK);
-//				double cx = Direccionesx50[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 4; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//		}
-//		else if (tipo == 2) { // entre 50 y 100
-//			if (par == 1) {
-//				fl_color(FL_RED);
-//				double cx = Direccionesx100[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 4; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//			else {
-//				fl_color(FL_BLACK);
-//				double cx = Direccionesx100[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 4; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//		}
-//		else if (tipo == 3) { // entre 10 y 150
-//			if (par == 1) {
-//				fl_color(FL_RED);
-//				double cx = Direccionesx150[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 3; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//			else {
-//				fl_color(FL_BLACK);
-//				double cx = Direccionesx150[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 3; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//		}
-//		else {// de 150 a 200
-//			if (par == 1) {
-//				fl_color(FL_RED);
-//				double cx = Direccionesx[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 2; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//			else {
-//				fl_color(FL_BLACK);
-//				double cx = Direccionesx[x].dir; //X
-//				double cy = Niveles[y].dir; //Y
-//				double cc = 2; // Radio
-//				while (cc > -0.5) {
-//					fl_circle(cx, cy, cc);
-//					cc = cc - 0.5;
-//				}
-//			}
-//		}
-//	}
-//};
-//
-//
-//class DrawPun : public Fl_Widget {
-//public:
-//	DrawPun(int X, int Y, int W, int H, const char*L = 0) : Fl_Widget(X, Y, W, H, L) { // salida x, llegada x, nivel act, izq/der
-//	}
-//	void draw() {
-//		fl_color(FL_BLACK);
-//		int par = x() - 1; // valor del nodo
-//		int x = par;
-//		par = y() - 1; //nodo llegada
-//		int y = par; 
-//		par = w() - 1; //nivel actual
-//		int act = par;
-//		par = h();//si es 1 es izq, si es 2 es derecha
-//
-//		const char* pereza = label();
-//
-//		if (pereza == "1") {// n<50
-//			if (par == 1) {
-//				double cx = Direccionesx50[x].dir; //X
-//				double cy = Direccionesx50[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 4;
-//
-//				fl_line(cx, niv, cy, niv + 21);
-//			}
-//			else {
-//				double cx = Direccionesx50[x].dir; //X
-//				double cy = Direccionesx50[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 4;
-//
-//				fl_line(cx, niv, cy, niv + 21);
-//			}
-//		}
-//		else if (pereza == "2") { // entre 50 y 100
-//			if (par == 1) {
-//				double cx = Direccionesx100[x].dir; //X
-//				double cy = Direccionesx100[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 4;
-//
-//				fl_line(cx, niv, cy, niv + 21);
-//			}
-//			else {
-//				double cx = Direccionesx100[x].dir; //X
-//				double cy = Direccionesx100[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 4;
-//
-//				fl_line(cx, niv, cy, niv + 21);
-//			}
-//		}
-//		else if (pereza == "3") { // entre 100 y 150
-//			if (par == 1) {
-//				double cx = Direccionesx150[x].dir; //X
-//				double cy = Direccionesx150[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 3;
-//
-//				fl_line(cx, niv, cy, niv + 23);
-//			}
-//			else {
-//				double cx = Direccionesx150[x].dir; //X
-//				double cy = Direccionesx150[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 3;
-//
-//				fl_line(cx, niv, cy, niv + 23);
-//			}
-//		}
-//		else {// de 150 a 200
-//			if (par == 1) {
-//				double cx = Direccionesx[x].dir; //X
-//				double cy = Direccionesx[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 2;
-//
-//				fl_line(cx, niv, cy, niv + 25);
-//			}
-//			else {
-//				double cx = Direccionesx[x].dir; //X
-//				double cy = Direccionesx[y].dir; //X1
-//
-//				double niv = Niveles[act].dir + 2;
-//
-//				fl_line(cx, niv, cy, niv + 25);
-//			}
-//		}
-//	}
-//};
-//
-//
-//
-
-
-//Aqui se guardan los punteros a los nodos para saber si se pueden o se tienen que dibujar o borrar
-//
-linea* Punteros[200];
-//bool Campos[200];
-//DrawNodo* NodosGraficos[200];
-//
-
-//void llenarDirecciones() {
-//	//Direcciones para 200 nodos
-//	int cont = 0, x = 35, y = 65;
-//	while (cont < 200) {
-//		Direccionesx[cont].dir = x;
-//		Campos[cont] = false;
-//		cont++;
-//		x += 5;
-//	}
-//	//Direcciones de los niveles
-//	cont = 0;
-//	while (cont < 200) {
-//		Niveles[cont].dir = y;
-//		y += 30;
-//		cont++;
-//	}
-//	//Direcciones para n<50 nodos
-//	cont = 0, x = 35;
-//	while (cont < 50) {
-//		Direccionesx50[cont].dir = x;
-//		cont++;
-//		x += 20;
-//	}
-//	//Direcciones para 50<n<100 nodos
-//	cont = 0, x = 35;
-//	while (cont < 100) {
-//		Direccionesx100[cont].dir = x;
-//		cont++;
-//		x += 10;//Cambiarlo
-//	}
-//	//Direcciones para 100<n<150 nodos
-//	cont = 0, x = 35;
-//	while (cont < 150) {
-//		Direccionesx150[cont].dir = x;
-//		cont++;
-//		x += 6.999;//Cambiarlo
-//	}
-//
-//
-//}
-//
-//int defNum() {
-//	int cont = 0;
-//	while (cont < 200) {
-//		if (Campos[cont] == false) {
-//			Campos[cont] = true;
-//			return cont;
-//		}
-//		cont++;
-//	}
-//}
-//
-//
 
 ///							Auxiliares							///
+
+void nRedraw() {
+	window->redraw();
+}
 
 class MyInput : public Fl_Input {
 	//Si hay que meter funciones es bueno hacerlo aqui
@@ -452,7 +177,11 @@ public:
 				cout << "Llego un node " << endl;
 
 				string nNodo = instruccion.substr(5, instruccion.size());
-
+				int number = std::atoi(nNodo.c_str());
+				
+				CAJITAS[number]->color(FL_RED);
+				nRedraw();
+				
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
 				const char * inst = instruccion.data();
@@ -564,13 +293,22 @@ int main(int argc, char **argv) {
 
 
 	// *** Esta es una cajita *** //
-	Fl_Box *box2 = new Fl_Box(305, 5, 5, 5, "");
-	box2->color(FL_BLUE);
-	box2->box(FL_FLAT_BOX);
+	int cont = 0;
+	for (int j = 0; j < 100; j++) {
+		for (int i = 0; i < 100; i++) {
+			CAJITAS[cont] = new Fl_Box(305 + ((i*9.94)), 5 + (j*6.9), 4, 4, "");
+			CAJITAS[cont]->color(FL_BLUE);
+			CAJITAS[cont]->box(FL_FLAT_BOX);
+			cont++;
+		}
+	}
+
+	
+	
 
 	DrawNodo* nodoR = new DrawNodo(500, 10, 0, 0);
 
-	linea * linea1 = new linea(1, 1, 1, 1); 
+	linea * linea1 = new linea(2, 1, 1, 1); 
 	linea1->color(FL_BLUE);
 	/*nodoR->SET()*/
 

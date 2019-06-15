@@ -13,23 +13,28 @@
 #include <iostream>
 #include "ArbolRN.h"
 #include "Permutacion.h"
-
-typedef struct Nodo*enlace;
-
+#include <FL/Fl_Group.H>
+#include <FL/fl_draw.H>
+#include "Fl_Multiline_Output.H"
+//
+//typedef struct Nodo*enlace;
+//
 Fl_Button *LineaALinea;
 Fl_Button *Correr;
 Fl_Button *Limpiar;
 Fl_Button *Salir;
-Fl_Input *entradaNum;
-Fl_Text_Buffer *buff;
+Fl_Text_Display *salidas;
+Fl_Text_Buffer *tbuff;
 Fl_Text_Display *disp; 
-
-////////////////////////////////////////////////////////////////////////// Parte grafica //////////////////////////////////////////////////////////////////////////
+Fl_Window *window;
+//
+//////////////////////////////////////////////////////////////////////////// Parte grafica //////////////////////////////////////////////////////////////////////////
 
 class Direccion {//x
 public:
 	int dir;
 };
+
 
 
 //Direcciones para 50 nodos
@@ -150,8 +155,6 @@ public:
 				}
 			}
 		}
-
-
 	}
 };
 
@@ -247,6 +250,10 @@ public:
 	}
 };
 
+
+
+
+
 //Aqui se guardan los punteros a los nodos para saber si se pueden o se tienen que dibujar o borrar
 
 DrawPun* Punteros[200];
@@ -309,187 +316,286 @@ int defNum() {
 
 
 ///							Auxiliares							///
+//void leerTexto() {
+//	cout << "Aqui toy" << endl;
+//	//Limpia el espacio de entrada
+//	const char* numerito = entradaNum->value();
+//	string numeroM;
+//	stringstream s(numerito);
+//	s >> numeroM;
+//	cout << "Instruccion a realizar: " << numeroM << endl;
+//	//Poner en la lista de instrucciones lo que tengo en numeroM
+//	entradaNum->replace(0, entradaNum->size(), NULL, 0);
+//
+//	//Limpia toda la pantalla ... por hacer ☼ ...
+//	//for (int i = 0; i < 200; i++) {
+//	//	//cout << "Borrando " << i << endl;
+//	//	window->remove(Punteros[i]);
+//	//	window->remove(NodosGraficos[i]);
+//	//	Punteros[i] = nullptr;
+//	//	NodosGraficos[i] = nullptr;
+//	//	Campos[i] = false;
+//	//}
+//
+//
+//
+//	//if (numeroM > 0 && numeroM <= 200) {
+//
+//	//	string tira = "";
+//
+//	//	tira = tira.substr(0, tira.size() - 1);
+//	//	const char * tirita = tira.c_str();
+//
+//
+//	//}
+//	//else {
+//	//	buff->text(" -Ha digitado un numero fuera de 1 a 200- ");
+//	//}
+//
+//}
+//
+//void correrCb(Fl_Widget* butt, void * data) {
+	//butt->deactivate();
+	//Fl::check();
+	//Fl_Window *w = (Fl_Window*)data;
+	//w->begin();
+	////Funcion-->
+//
+//
+//	//Limpia el espacio de entrada
+//	const char* numerito = entradaNum->value();
+//	int numeroM;
+//	stringstream s(numerito);
+//	s >> numeroM;
+//	cout << "Numero de nodos: " << numeroM << endl;
+//	entradaNum->replace(0, entradaNum->size(), NULL, 0);
+//
+//	//Limpia toda la pantalla ... por hacer ☼ ...
+//	for (int i = 0; i < 200; i++) {
+//		//cout << "Borrando " << i << endl;
+//		w->remove(Punteros[i]);
+//		w->remove(NodosGraficos[i]);
+//		Punteros[i] = nullptr;
+//		NodosGraficos[i] = nullptr;
+//		Campos[i] = false;
+//	}
+//
+//	if (numeroM > 0 && numeroM<=200) {
+//		//Generando el arbol
+//		int * numeros = genere(numeroM);
+//		link arbol = nullptr;
+//		string tira = "";
+//		for (int i = 0; i < numeroM; i++) {
+//			RBinsert(arbol, numeros[i]);
+//			tira += to_string(numeros[i]);
+//			tira += ",";
+//		}
+//
+//		cout << arbol;
+//
+//		tira = tira.substr(0, tira.size() - 1);
+//		const char * tirita = tira.c_str();
+//
+//		//Verifica entre que numeros se encuentra la cantidad de nodos solicitada y crea el arbol
+//		//segun las direcciones dadas para esa cantidad
+//
+//		if (numeroM >= 0 && numeroM < 51) {
+//			dibujarArbol3(arbol, 0);
+//			buff->text(tirita);
+//
+//		}
+//		else if (numeroM > 50 && numeroM < 101) {
+//			dibujarArbol2(arbol, 0);
+//			buff->text(tirita);
+//
+//		}
+//		else if (numeroM > 100 && numeroM < 151) {
+//			dibujarArbol1(arbol, 0);
+//			buff->text(tirita);
+//
+//		}
+//		else {
+//			dibujarArbol(arbol, 0);
+//			buff->text(tirita);
+//		}
+//	}
+//	else {
+//		buff->text(" -Ha digitado un numero fuera de 1 a 200- ");
+//	}
+//
+//	
+//
+//	////<--Funcion
+//	//w->redraw();
+//	//w->end();
+//	//butt->activate();
+//}
+////
+//
+//void close_cb(Fl_Widget* obj, void*)
+//{
+//		exit(0);
+//}
 
-//Nodos 150<n<200
-void dibujarArbol(link& p, int nivel) {
 
-	int x5 = p->v + 1, x6 = nivel + 1;
+void dibujarVias() {
 
-	if (p->nColor == 0) { //0=rojo   1=negro
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 1, 4);
-	}
-	else {
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 4);
-	}
+}
+
+
+
+
+class MyInput : public Fl_Input {
+	//Si hay que meter funciones es bueno hacerlo aqui
+	//No he solucionado como modificar la ventana... pienso que sería bueno ponerla como
+	 // parametro global
+public:
+
 	
-	//Punteros
 
-	if (p->izq) {
-		dibujarArbol(p->izq, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->izq->v+1, x6, 1, "4");
-	}
-	if (p->der) {
-		dibujarArbol(p->der, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->der->v+1, x6, 2, "4");
-	}
-}
+	void leerTexto() {
+		cout << "Aqui toy" << endl;
+		//Limpia el espacio de entrada
+		string instruccion = this->value();
 
-//Nodos 100<n<150
-void dibujarArbol1(link& p, int nivel) {
+		cout << "Instruccion a realizar: '" << instruccion <<"'" << endl;
 
-	int x5 = p->v + 1, x6 = nivel + 1;
-
-	if (p->nColor == 0) { //0=rojo   1=negro
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 1, 3);
-	}
-	else {
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 3);
-	}
-
-	//Nota estoy metiendo dos punteros en una misma direccion.... entonces la solucion sería que se llene el arreglo de punteros en forma ascendente.
+		//Intrucciones
+		if (instruccion == "clear") {
 
 
-	if (p->izq) {
-		dibujarArbol1(p->izq, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->izq->v + 1, x6, 1, "3");
-	}
-	if (p->der) {
-		dibujarArbol1(p->der, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->der->v + 1, x6, 2, "3");
-	}
-}
+			//limpiar todos los iluminadosde nodos y arcos esto es en dinamica
+			//borra y reescribe toda la memoria en pantalla
 
-//Nodos 50<n<100
-void dibujarArbol2(link& p, int nivel) {
-
-	int x5 = p->v + 1, x6 = nivel + 1;
-
-	if (p->nColor == 0) { //0=rojo   1=negro
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 1, 2);
-	}
-	else {
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 2);
-	}
-
-	//Nota estoy metiendo dos punteros en una misma direccion.... entonces la solucion sería que se llene el arreglo de punteros en forma ascendente.
-
-
-	if (p->izq) {
-		dibujarArbol2(p->izq, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->izq->v + 1, x6, 1, "2");
-	}
-	if (p->der) {
-		dibujarArbol2(p->der, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->der->v + 1, x6, 2, "2");
-	}
-}
-//Nodos n<50
-void dibujarArbol3(link& p, int nivel) {
-
-	int x5 = p->v + 1, x6 = nivel + 1;
-
-	if (p->nColor == 0) { //0=rojo   1=negro
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 1, 1);
-	}
-	else {
-		NodosGraficos[p->v] = new DrawNodo(x5, x6, 2, 1);
-	}
-	//Punteros
-	if (p->izq) {
-		dibujarArbol3(p->izq, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->izq->v + 1, x6, 1, "1");
-	}
-	if (p->der) {
-		dibujarArbol3(p->der, nivel + 1);
-		Punteros[defNum()] = new DrawPun(x5, p->der->v + 1, x6, 2, "1");
-	}
-}
-
-
-///						Call backs						///
-
-void correrCb(Fl_Widget* butt, void * data) {
-	butt->deactivate();
-	Fl::check();
-	Fl_Window *w = (Fl_Window*)data;
-	w->begin();
-	//Funcion-->
-
-
-	//Limpia el espacio de entrada
-	const char* numerito = entradaNum->value();
-	int numeroM;
-	stringstream s(numerito);
-	s >> numeroM;
-	cout << "Numero de nodos: " << numeroM << endl;
-	entradaNum->replace(0, entradaNum->size(), NULL, 0);
-
-	//Limpia toda la pantalla ... por hacer ☼ ...
-	for (int i = 0; i < 200; i++) {
-		//cout << "Borrando " << i << endl;
-		w->remove(Punteros[i]);
-		w->remove(NodosGraficos[i]);
-		Punteros[i] = nullptr;
-		NodosGraficos[i] = nullptr;
-		Campos[i] = false;
-	}
-
-	if (numeroM > 0 && numeroM<=200) {
-		//Generando el arbol
-		int * numeros = genere(numeroM);
-		link arbol = nullptr;
-		string tira = "";
-		for (int i = 0; i < numeroM; i++) {
-			RBinsert(arbol, numeros[i]);
-			tira += to_string(numeros[i]);
-			tira += ",";
-		}
-
-		cout << arbol;
-
-		tira = tira.substr(0, tira.size() - 1);
-		const char * tirita = tira.c_str();
-
-		//Verifica entre que numeros se encuentra la cantidad de nodos solicitada y crea el arbol
-		//segun las direcciones dadas para esa cantidad
-
-		if (numeroM >= 0 && numeroM < 51) {
-			dibujarArbol3(arbol, 0);
-			buff->text(tirita);
+		//Limpia toda la pantalla ... por hacer ☼ ...
+		//for (int i = 0; i < 200; i++) {
+		//	//cout << "Borrando " << i << endl;
+		//	window->remove(Punteros[i]);
+		//	window->remove(NodosGraficos[i]);
+		//	Punteros[i] = nullptr;
+		//	NodosGraficos[i] = nullptr;
+		//	Campos[i] = false;
+		//}
 
 		}
-		else if (numeroM > 50 && numeroM < 101) {
-			dibujarArbol2(arbol, 0);
-			buff->text(tirita);
+		else if (instruccion == "close") {
+			//Cerrar grafo actual y limpiar areas de despliegue y cinta
+			// limpia los iluminados
+
 
 		}
-		else if (numeroM > 100 && numeroM < 151) {
-			dibujarArbol1(arbol, 0);
-			buff->text(tirita);
-
+		else if (instruccion == "cleart") { //Limpiar la cinta
+			tbuff->text("");
+			salidas->buffer(tbuff);
 		}
 		else {
-			dibujarArbol(arbol, 0);
-			buff->text(tirita);
+			string sinstruccion = instruccion.substr(0, 3);
+			string sinstruccion4 = instruccion.substr(0, 4);
+			string sinstruccion5 = instruccion.substr(0, 5);			
+			string sinstruccion7 = instruccion.substr(0, 7);
+
+			if (sinstruccion == "to ") {
+				cout << "LLego un to" << endl;
+
+				//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+
+				//*********************************************************************//
+
+			}
+			else if (sinstruccion4 == "spt ") {
+				cout << "LLego un spt " << endl;
+
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
+			else if (sinstruccion5 == "node ") {
+				cout << "Llego un node " << endl;
+
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
+			else if (sinstruccion5 == "arcs ") {
+				cout << "LLego un arcs " << endl;
+
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
+			else if (sinstruccion5 == "open ") {
+				cout << "Llego un open" << endl;
+
+
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
+			else if (sinstruccion7 == "import ") {
+				cout << "LLego un import " << endl;
+
+
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = instruccion + "\n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
+			else {
+				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+				instruccion = "Instruccion invalida \n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+			}
 		}
+
+
+
+		//Poner en la lista de instrucciones lo que tengo en numeroM******Falta****
+
+		//Reemplaza lo que hay en el cuadro de entrada de texto
+		this->replace(0, this->size(), NULL, 0);
 	}
-	else {
-		buff->text(" -Ha digitado un numero fuera de 1 a 200- ");
+	int handle(int e) {
+		switch (e) {
+		case FL_KEYUP:
+			int key = Fl::event_key();
+			if (key == FL_Enter) {
+				leerTexto();
+				cout << "Bla bla" << endl;
+				//Llamar aqui a la funcion --Leer instruccion--
+				return(1);
+			}
+			break;
+		}
+		return(Fl_Input::handle(e));    // let Fl_Input handle all other events
 	}
-
-	
-
-	//<--Funcion
-	w->redraw();
-	w->end();
-	butt->activate();
-}
+	MyInput(int X, int Y, int W, int H, const char*L = 0) :Fl_Input(X, Y, W, H, L) {
+	}
+};
 
 
-void close_cb(Fl_Widget* obj, void*)
-{
-		exit(0);
-}
+
+
 
 
 int main(int argc, char **argv) {
@@ -499,44 +605,50 @@ int main(int argc, char **argv) {
 
 	llenarDirecciones();
 
-	Fl_Window window(0, 0, 1300, 700, "Dibujando Bosques");
-
-	//------------------------- Caja del control ----------------------------- //
-	Fl_Box *box = new Fl_Box(1120, 15, 150, 40, "Control");
+	window = new Fl_Window(20, 40, 1302, 700, "MIWA");
+	
+	////------------------------- Caja de instrucciones ----------------------------- //
+	Fl_Box *box = new Fl_Box(1, 1, 298, 698, "");
+	box->color(FL_BLUE);
 	box->box(_FL_PLASTIC_THIN_DOWN_BOX);
 	box->labelfont(FL_BOLD + FL_ITALIC);
 	box->labelsize(32);
 	
-	//------------------------- Caja que indica donde se dibuja ----------------------------- //
-	Fl_Box *box1 = new Fl_Box(30, 15, 1000, 40, "Dibujo");
-	box1->box(_FL_PLASTIC_THIN_DOWN_BOX);
+	////------------------------- Caja de dibujo del grafo ----------------------------- //
+	Fl_Box *box1 = new Fl_Box(300, 1, 1000, 698, "");
+	box1->color(FL_GRAY);
+	box1->box(FL_EMBOSSED_BOX);
 	box1->labelfont(FL_BOLD + FL_ITALIC);
 	box1->labelsize(32);
-	//------------------------- Texto ----------------------------- //
-	Fl_Box *texto = new Fl_Box(1192, 90, 0, 0,"Indique el numero\nmaximo de nodos");
-	texto->labelfont(FL_HELVETICA_ITALIC);
-	texto->labelsize(17);
+
+	Fl_Box *box2 = new Fl_Box(305, 5, 5, 5, "");
+	box2->color(FL_BLUE);
+	box2->box(FL_FLAT_BOX);
 
 	//Entrada de Numero maximo 
-	entradaNum = new Fl_Input(1135, 120, 120, 30);
+	MyInput *entradaNum = new MyInput(2, 668, 296, 30);
+	
+	
 
-	//Salida del arreglo
-	buff = new Fl_Text_Buffer();
-	disp = new Fl_Text_Display(30, 600, 1000, 50, "Arreglo introducido");
-	disp->buffer(buff);
+	salidas = new Fl_Text_Display (1, 1, 296, 666);
+	salidas->textcolor(FL_WHITE);
+	salidas->color(FL_BLUE);
+	tbuff = new Fl_Text_Buffer();
+	salidas->buffer(tbuff);
 
-	// ------------------------- Botones ----------------------------- //
-	Fl_Button Correr(1135, 170, 120, 50, "Dibujar");
-	Salir = new Fl_Button(1165, 240, 60, 40, "Salir");
-	Correr.color(FL_GREEN);
-	Salir->color(FL_RED);
-	//Funciones//
-	Salir->callback((Fl_Callback*)close_cb);
-	Correr.callback(correrCb,&window);//////////////////////////////
+	////Salida del arreglo
+	//buff = new Fl_Text_Buffer();
+	//disp = new Fl_Text_Display(30, 600, 1000, 50, "Arreglo introducido");
+	//disp->buffer(buff);
 
-
-
-
-	window.show();
+	
+	window->show();
 	return Fl::run();
 }
+
+//fuck my life//
+
+
+
+
+

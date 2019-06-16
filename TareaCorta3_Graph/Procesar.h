@@ -457,5 +457,4 @@ inline void Procesar::mostrarArcos()
 		archivoARC.leer(i).showKeys();
 		cout << endl;
 	}
-	//cout << archivoARC.tam()<<endl;
 }

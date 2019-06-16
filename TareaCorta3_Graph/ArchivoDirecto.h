@@ -61,8 +61,8 @@ public:
 			return "Archivo : " + nArchivo + "\nRegistros : " + to_string(this->tam()) + "\n";
 		else return "***";
 	}
-	void abrir() {
-		fs.open(nArchivo, ios_base::binary | ios_base::in | ios_base::out);
+	void abrir(string nArchivo1) {
+		fs.open(nArchivo1, ios_base::binary | ios_base::in | ios_base::out);
 		abierto = true;
 	}
 	void cerrar() {

@@ -20,6 +20,7 @@ struct BTreePage {
 	//Constructores
 	void insertarLlave(TKey llave) {
 		for (int i = 0; i < M;i++) {
+			cout << "Holaaa" << endl;
 			if (key[i].valor == 0) {
 				key[i] = llave;
 				break;
@@ -29,7 +30,9 @@ struct BTreePage {
 			}
 		}
 	}
-
+	bool vacia() {
+		return (key[0].valor != 0 ? false : true);
+	}
 	void showKeys() {
 		for (int i = 0; i < M; i++) {
 			cout << "Llave: " << key[i].valor << endl;

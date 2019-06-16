@@ -67,6 +67,7 @@ public:
 	vector<Linea*>dibujosA;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
+	string nArchivo;
 	Fl_Box *box;
 	Fl_Box *box1;
 	Fl_Text_Display *salidas;
@@ -339,6 +340,7 @@ public:
 void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .txt
 {
 	ifstream archivo;
+	this->nArchivo = nombre;
 	string naux, x, y, vM, vP, red, nom;
 	string origen, dest, dist, vMax, vProm, newN, newOrigen, newMax, newX;
 	archivo.open(nombre);
@@ -380,8 +382,10 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 }
 void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida
 {
-	for (int i = 0; i < K; i++) {
-		for (int j = 0; j < N; j++) {
+	cout << nodos.size() << endl;
+	cout << arcos.size() << endl;
+	/*for (int i = 0; i < nodos.size(); i++) {
+		for (int j = 0; j < arcos.size(); j++) {
 			if (nodos[i].nNodo == arcos[j].origen) { //Detecta  origen
 				nodos[i].gradoSalida += 1;
 			}
@@ -389,12 +393,13 @@ void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida
 				nodos[i].gradoEntrada += 1;
 			}
 		}
-	}
+	}*/
 
 	for (int i = 0; i < K; i++) {
 		//cout << "Nodo: " << i << " Entrada: " << nodos[i].gradoEntrada << " Salida: " << nodos[i].gradoSalida << endl;
 	}
 	cout << "** Nodos cargados y leidos **"<<endl;
+	cout << arcos.size()<<endl;
 }
 void Procesar::crearVRT(string nombre) 
 {
@@ -407,12 +412,15 @@ void Procesar::crearVRT(string nombre)
 }
 inline void Procesar::crearARC(string nombre)
 {
+	cout << "Llegue"<<endl;
 	archivoARC = { nombre + ".ARC" };
 	BTreePage pagina;
+	cout << "numero de arcos'" << arcos.size() << "'" << endl;
 	for (int i = 0; i < arcos.size(); i++) {
-		if (!pagina.lleno) {
-			TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
-			pagina.insertarLlave(nueva);
+		cout << "cuantos" << i << endl;
+		if (pagina.lleno == false) {
+			//TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
+			//pagina.insertarLlave(nueva);
 			cout << "Meti una llave"<<endl;
 		}
 		else {
@@ -421,7 +429,10 @@ inline void Procesar::crearARC(string nombre)
 			BTreePage pagina{};
 		}
 	}
-	cout << "Did it!"<<endl;
+	if (!pagina.vacia()) {
+		archivoARC.agregarFinal(pagina, pagina.t);
+	}
+	archivoARC.cerrar();
 }
 inline void Procesar::mostrar()
 {
@@ -434,7 +445,7 @@ inline void Procesar::mostrar()
 }
 inline void Procesar::abrir()
 {
-	archivoVRT.abrir();
+	archivoVRT.abrir(nArchivo);
 	cout << archivoVRT.tam()<<endl;
 	for (int i = 0; i < archivoVRT.tam(); i++) {
 		cout << archivoVRT.leer(i).nNodo << " " << archivoVRT.leer(i).gradoEntrada << " " << archivoVRT.leer(i).gradoSalida << endl;
@@ -442,11 +453,13 @@ inline void Procesar::abrir()
 }
 inline void Procesar::mostrarArcos()
 {
-	cout << archivoARC.tam() << endl;
-	archivoARC.abrir();
+	
+	archivoARC.abrir("ciudad.ARC");
+	cout <<"Tamagno de los arcos: "<< archivoARC.tam() << endl;
+	//archivoARC.abrir();
 	/*for (int i = 0; i < archivoARC.tam(); i++) {
 		archivoARC.leer(i).showKeys();
 		cout << endl;
 	}*/
-	cout << archivoARC.tam()<<endl;
+	//cout << archivoARC.tam()<<endl;
 }

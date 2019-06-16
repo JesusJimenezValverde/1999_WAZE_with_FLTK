@@ -378,13 +378,15 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 		}
 		c++;
 	}
+
 	contarArcos(arcos.size(), nodos.size());
 }
 void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida
 {
-	cout << nodos.size() << endl;
-	cout << arcos.size() << endl;
-	/*for (int i = 0; i < nodos.size(); i++) {
+	for (int j = 0; j < arcos.size(); j++) {
+		cout << arcos[j].origen << endl;
+	}
+	for (int i = 0; i < nodos.size(); i++) {
 		for (int j = 0; j < arcos.size(); j++) {
 			if (nodos[i].nNodo == arcos[j].origen) { //Detecta  origen
 				nodos[i].gradoSalida += 1;
@@ -393,10 +395,10 @@ void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida
 				nodos[i].gradoEntrada += 1;
 			}
 		}
-	}*/
+	}
 
 	for (int i = 0; i < K; i++) {
-		//cout << "Nodo: " << i << " Entrada: " << nodos[i].gradoEntrada << " Salida: " << nodos[i].gradoSalida << endl;
+		cout << "Nodo: " << i << " Entrada: " << nodos[i].gradoEntrada << " Salida: " << nodos[i].gradoSalida << endl;
 	}
 	cout << "** Nodos cargados y leidos **"<<endl;
 	cout << arcos.size()<<endl;
@@ -419,8 +421,8 @@ inline void Procesar::crearARC(string nombre)
 	for (int i = 0; i < arcos.size(); i++) {
 		cout << "cuantos" << i << endl;
 		if (pagina.lleno == false) {
-			//TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
-			//pagina.insertarLlave(nueva);
+			TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
+			pagina.insertarLlave(nueva);
 			cout << "Meti una llave"<<endl;
 		}
 		else {

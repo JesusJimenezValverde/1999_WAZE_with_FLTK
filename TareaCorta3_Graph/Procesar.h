@@ -248,6 +248,10 @@ public:
 				string nombArchivo = instruccion.substr(8);
 				nombArchivo = nombArchivo.substr(0,nombArchivo.size()-1);
 				this->importarArchivo(nombArchivo);
+				nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 4);
+				cout << nombArchivo << endl;
+				this->crearVRT(nombArchivo);
+				this->crearARC(nombArchivo);
 				dibujaGrafo();
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
@@ -321,18 +325,16 @@ public:
 			ventana->remove(dibujosN[0]);
 			dibujosN.pop_back();
 		}
-		//tbuff->text("");
-		//salidas->buffer(tbuff);
 		for (int i = 0; i < nodos.size(); i++) {
 			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,1,1));
 			ventana->add(dibujosN[i]);
 		}
-		cout << "Guarever"<< endl;
-		//for (int i = 0; i < arcos.size(); i++) {
-		//	dibujosA.push_back(new Linea(nodos[arcos[i].origen].x+300,nodos[arcos[i].origen].y, 
-		//		nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y,1));
-		//	ventana->add(dibujosA[i]);
-		//}
+		cout << arcos.size() << endl;
+		for (int i = 0; i < arcos.size(); i++) {
+			dibujosA.push_back(new Linea(nodos[arcos[i].origen].x+300,nodos[arcos[i].origen].y, 
+				nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y,1));
+			ventana->add(dibujosA[i]);
+		}
 		ventana->redraw();
 	}
 };

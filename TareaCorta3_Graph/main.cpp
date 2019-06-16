@@ -33,10 +33,6 @@ int main(int argc, char **argv) {
 	Fl_Window * ventana = new Fl_Window(20, 40, 1302, 700, "MIWA");
 	Procesar p(2, 668, 296, 30,ventana);
 
-	p.importarArchivo("ciudad.txt");
-	p.crearARC("ciudad");
-	p.mostrarArcos();
-
 	ventana->show();
 	return Fl::run();
 }

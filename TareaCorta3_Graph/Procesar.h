@@ -71,8 +71,6 @@ public:
 	Fl_Text_Display *salidas;
 	Fl_Text_Buffer *tbuff;
 	Fl_Window *window;
-	DrawNodo * CIRCULITOS[1001];
-	Fl_Box *CAJITAS[1001];
 	Linea *LINEAS[1001];
 	bool ejecutado;
 	Fl_Window * ventana;
@@ -94,14 +92,11 @@ public:
 			//borra y reescribe toda la memoria en pantalla
 
 		//Limpia toda la pantalla ... por hacer ☼ ...
-		//for (int i = 0; i < 1000; i++) {
-		//	//cout << "Borrando " << i << endl;
-		//	window->remove(Punteros[i]);
-		//	window->remove(NodosGraficos[i]);
-		//	Punteros[i] = nullptr;
-		//	NodosGraficos[i] = nullptr;
-		//	Campos[i] = false;
-		//}
+		for (int i = 0; i < dibujosN.size(); i++) {
+			//cout << "Borrando " << i << endl;
+			ventana->remove(dibujosN[i]);
+		}
+		ventana->redraw();
 		}
 		else if (instruccion == "close") {
 			//Cerrar grafo actual y limpiar areas de despliegue y cinta
@@ -149,7 +144,7 @@ public:
 				string nNodo = instruccion.substr(5, instruccion.size());
 				int number = std::atoi(nNodo.c_str());
 
-				CAJITAS[number]->color(FL_RED);
+				//CAJITAS[number]->color(FL_RED);
 				nRedraw();
 
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
@@ -194,6 +189,10 @@ public:
 				const char * inst = instruccion.data();
 				tbuff->append(inst);
 				salidas->buffer(tbuff);
+				string aux = "Informacion Leida:\nVertices: " + to_string(nodos.size()) + "\nArcos: " + to_string(arcos.size())+"\n";
+				tbuff->append(aux.data());
+				salidas->buffer(tbuff);
+
 				////*********************************************************************//
 			}
 			else {
@@ -228,18 +227,18 @@ public:
 		this->iniciar(); }
 	void iniciar(){
 	box = new Fl_Box(1, 1, 298, 666, "");
-	box->color(FL_GRAY);
+	box->color(FL_WHITE);
 	box->box(_FL_PLASTIC_THIN_DOWN_BOX);
 	box->labelfont(FL_BOLD + FL_ITALIC);
 	box->labelsize(32);
 	box1 = new Fl_Box(300, 1, 1000, 698, "");
-	box1->color(FL_GRAY);
+	box1->color(FL_WHITE);
 	box1->box(FL_EMBOSSED_BOX);
 	box1->labelfont(FL_BOLD + FL_ITALIC);
 	box1->labelsize(32);
 	salidas = new Fl_Text_Display(1, 1, 296, 666);
 	salidas->textcolor(FL_WHITE);
-	salidas->color(FL_BLACK);
+	salidas->color(FL_DARK_CYAN);
 	tbuff = new Fl_Text_Buffer();
 	salidas->buffer(tbuff);
 	}

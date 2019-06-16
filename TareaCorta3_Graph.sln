@@ -5,6 +5,17 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TareaCorta3_Graph", "TareaCorta3_Graph\TareaCorta3_Graph.vcxproj", "{DED6C7C5-6CFF-4666-8A0B-F056E2F29EF5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FBC06DE5-6411-4310-A0BB-9D4684C3556D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logica", "Logica", "{31FA80D8-9717-407C-B28D-B144B2192C67}"
+	ProjectSection(SolutionItems) = preProject
+		TareaCorta3_Graph\ArchivoDirecto.h = TareaCorta3_Graph\ArchivoDirecto.h
+		TareaCorta3_Graph\BTree.h = TareaCorta3_Graph\BTree.h
+		TareaCorta3_Graph\Persona.h = TareaCorta3_Graph\Persona.h
+		TareaCorta3_Graph\Procesar.h = TareaCorta3_Graph\Procesar.h
+		TareaCorta3_Graph\TKey.h = TareaCorta3_Graph\TKey.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

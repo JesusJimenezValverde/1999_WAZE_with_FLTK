@@ -159,12 +159,12 @@ inline void error(const string& s, int i)
 }
 
 
-template<class T> char* as_bytes(T& i)	// needed for binary I/O
+/*template<class T> char* as_bytes(T& i)	// needed for binary I/O
 {
 	void* addr = &i;	// get the address of the first byte
 						// of memory used to store the object
 	return static_cast<char*>(addr); // treat that memory as bytes
-}
+}*/
 
 
 inline void keep_window_open()

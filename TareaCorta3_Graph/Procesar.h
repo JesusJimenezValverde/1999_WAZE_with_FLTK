@@ -414,16 +414,12 @@ void Procesar::crearVRT(string nombre)
 }
 inline void Procesar::crearARC(string nombre)
 {
-	cout << "Llegue"<<endl;
 	archivoARC = { nombre + ".ARC" };
 	BTreePage pagina;
-	cout << "numero de arcos'" << arcos.size() << "'" << endl;
 	for (int i = 0; i < arcos.size(); i++) {
-		cout << "cuantos" << i << endl;
 		if (pagina.lleno == false) {
 			TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
 			pagina.insertarLlave(nueva);
-			cout << "Meti una llave"<<endl;
 		}
 		else {
 			archivoARC.agregarFinal(pagina, pagina.t);
@@ -434,6 +430,7 @@ inline void Procesar::crearARC(string nombre)
 	if (!pagina.vacia()) {
 		archivoARC.agregarFinal(pagina, pagina.t);
 	}
+
 	archivoARC.cerrar();
 }
 inline void Procesar::mostrar()
@@ -455,13 +452,10 @@ inline void Procesar::abrir()
 }
 inline void Procesar::mostrarArcos()
 {
-	
 	archivoARC.abrir("ciudad.ARC");
-	cout <<"Tamagno de los arcos: "<< archivoARC.tam() << endl;
-	//archivoARC.abrir();
-	/*for (int i = 0; i < archivoARC.tam(); i++) {
+	for (int i = 0; i < archivoARC.tam(); i++) {
 		archivoARC.leer(i).showKeys();
 		cout << endl;
-	}*/
+	}
 	//cout << archivoARC.tam()<<endl;
 }

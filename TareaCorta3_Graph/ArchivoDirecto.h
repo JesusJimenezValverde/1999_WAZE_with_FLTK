@@ -12,7 +12,6 @@ char * as_bytes(T& p);
 //Metodo para escribir un encabezado entero en un archivo
 void escribeCabezera(int n, fstream &fs) {
 	//Se posiciona al inicio
-	cout << "Mensaje: " << n << endl;
 	fs.seekp(0);
 	fs.write(as_bytes<int>(n), sizeof(n));
 }

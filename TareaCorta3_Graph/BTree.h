@@ -20,12 +20,13 @@ struct BTreePage {
 	//Constructores
 	void insertarLlave(TKey llave) {
 		for (int i = 0; i < M;i++) {
-			cout << "Holaaa" << endl;
 			if (key[i].valor == 0) {
 				key[i] = llave;
+				cout << "Meti una llave en la posicion: "<<i<<endl;
 				break;
 			}
-			if (key[M].distancia != 0) {
+			if (key[M-1].distancia != 0) {
+				cout << "Se lleno " << endl;
 				lleno = true;
 			}
 		}

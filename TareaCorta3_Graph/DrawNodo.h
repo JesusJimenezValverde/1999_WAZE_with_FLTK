@@ -25,9 +25,16 @@ public:
 	void draw() {
 		int cx = x();
 		int cy = y();
-		fl_color(FL_BLUE);
-		fl_pie(cx, cy, 25, 25, 0, 360);
-		//fl_color(color);	// reset color
+		int cw = w();
+		if (cw == 1) {
+			fl_color(FL_BLUE);
+			fl_pie(cx, cy, 24, 24, 0, 360);
+		}
+		else {
+			fl_color(FL_RED);
+			fl_pie(cx, cy, 24, 24, 0, 360);
+		}
+
 	}
 
 };

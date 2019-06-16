@@ -64,6 +64,7 @@ public:
 	vector<Nodo> nodos;
 	vector<Arco> arcos;
 	vector<DrawNodo*>dibujosN;
+	vector<Linea*>dibujosA;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
 	Fl_Box *box;
@@ -71,7 +72,6 @@ public:
 	Fl_Text_Display *salidas;
 	Fl_Text_Buffer *tbuff;
 	Fl_Window *window;
-	Linea *LINEAS[1001];
 	bool ejecutado;
 	Fl_Window * ventana;
 	//Procesar() {}
@@ -99,8 +99,31 @@ public:
 		ventana->redraw();
 		}
 		else if (instruccion == "close") {
-			//Cerrar grafo actual y limpiar areas de despliegue y cinta
-			// limpia los iluminados
+			if (dibujosN.size() > 0 && nodos.size() > 0) {
+				for (int i = dibujosN.size() - 1; i > 0; i--) {
+					//cout << "Borrando " << i << endl;
+					ventana->remove(dibujosN[i]);
+					dibujosN.pop_back();
+					nodos.pop_back();
+				}
+				ventana->remove(dibujosN[0]);
+				dibujosN.pop_back();
+				nodos.pop_back();
+
+				tbuff->text("");
+				salidas->buffer(tbuff);
+
+				ventana->redraw();
+			}
+			else {
+				////*** Esto despues de hacer la instruccion si y solo si es valida ***//
+				instruccion = "No hay red que cerrar!!! \n";
+				const char * inst = instruccion.data();
+				tbuff->append(inst);
+				salidas->buffer(tbuff);
+				////*********************************************************************//
+
+			}
 		}
 		else if (instruccion == "cleart") { //Limpiar la cinta
 			tbuff->text("");
@@ -139,20 +162,38 @@ public:
 				////*********************************************************************//
 			}
 			else if (sinstruccion5 == "node ") {
-				cout << "Llego un node " << endl;
-
 				string nNodo = instruccion.substr(5, instruccion.size());
 				int number = std::atoi(nNodo.c_str());
 
-				//CAJITAS[number]->color(FL_RED);
-				nRedraw();
+				if (number < dibujosN.size()) {
+					ventana->remove(dibujosN[number]);
+					dibujosN[number] = new DrawNodo(nodos[number].x + 300, nodos[number].y, 2, 1);
+					ventana->add(dibujosN[number]);
+					ventana->redraw();
 
-				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
-				instruccion = instruccion + "\n";
-				const char * inst = instruccion.data();
-				tbuff->append(inst);
-				salidas->buffer(tbuff);
-				////*********************************************************************//
+					////*** Esto despues de hacer la instruccion si y solo si es valida ***//
+					instruccion = instruccion + "\n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					string info = "Nodo: " + to_string(number) + "\n" +
+						"Coordenada x: " + to_string(nodos[number].x) + "\n" +
+						"Coordenada y: " + to_string(nodos[number].y) + "\n" +
+						"Grado entrada: " + to_string(nodos[number].gradoEntrada) + "\n" +
+						"Grado salida: " + to_string(nodos[number].gradoSalida) + "\n";
+					const char * cool = info.data();
+					tbuff->append(cool);
+					salidas->buffer(tbuff);
+					////*********************************************************************//
+				}
+				else {
+					////*** Esto despues de hacer la instruccion si y solo si es valida ***//
+					instruccion = "El nodo no existe!!! \n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+					////*********************************************************************//
+				}
+
 			}
 			else if (sinstruccion5 == "arcs ") {
 				cout << "LLego un arcs " << endl;
@@ -168,14 +209,37 @@ public:
 			}
 			else if (sinstruccion5 == "open ") {
 				/*cout << "Llego un open" << endl;*/
-
-				string nombArchivo = instruccion.substr(5, instruccion.size());
-
+				string nombArchivo = instruccion.substr(6);
+				nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 1);
+				cout << "Open: " << nombArchivo<<endl;
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
 				const char * inst = instruccion.data();
 				tbuff->append(inst);
 				salidas->buffer(tbuff);
+				ifstream archivo, archivo2;
+				archivo.open(nombArchivo+".VRT",ios::in);
+				archivo2.open(nombArchivo +".ARC", ios::in);
+				string mensaje;
+				
+				if (archivo.fail() || archivo2.fail()) {
+					mensaje = "El archivo .VRT o .ARC no se pudieron abrir \n o no existen.\n";
+					tbuff->append(mensaje.data());
+					salidas->buffer(tbuff);
+					cout << "FALLO LA APERTURA";
+				}
+				else {
+					mensaje = "Los archivos .VRT y .ARC se abrieron exitosamente.\n";
+					tbuff->append(mensaje.data());
+					salidas->buffer(tbuff);
+					archivoVRT = { nombArchivo+".VRT" };
+					for (int i = 0; i < archivoVRT.tam(); i++) {
+						nodos.push_back(archivoVRT.leer(i));
+					}
+					cout << "LLegué" << endl;
+					this->dibujaGrafo();
+					cout << "LLegué" << endl;
+				}
 				////*********************************************************************//
 			}
 			else if (sinstruccion7 == "import ") {
@@ -246,11 +310,29 @@ public:
 		ventana->redraw();
 	}
 	void dibujaGrafo() {
-		for (int i = 0; i < nodos.size(); i++) {
-			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,25,25));
-			ventana->add(dibujosN[i]);
-			ventana->redraw();
+		cout <<"Cant de nodos: "<< nodos.size() << endl;
+
+		if (dibujosN.size() > 0 && nodos.size() > 0) {
+			for (int i = dibujosN.size() - 1; i > 0; i--) {
+				ventana->remove(dibujosN[i]);
+				dibujosN.pop_back();
+			}
+			ventana->remove(dibujosN[0]);
+			dibujosN.pop_back();
 		}
+		//tbuff->text("");
+		//salidas->buffer(tbuff);
+		for (int i = 0; i < nodos.size(); i++) {
+			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,1,1));
+			ventana->add(dibujosN[i]);
+		}
+		cout << "Guarever"<< endl;
+		//for (int i = 0; i < arcos.size(); i++) {
+		//	dibujosA.push_back(new Linea(nodos[arcos[i].origen].x+300,nodos[arcos[i].origen].y, 
+		//		nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y,1));
+		//	ventana->add(dibujosA[i]);
+		//}
+		ventana->redraw();
 	}
 };
 
@@ -319,7 +401,7 @@ void Procesar::crearVRT(string nombre)
 	archivoVRT = {nombre+".VRT"};
 	if (archivoVRT.tam() == 0) {
 		for (int i = 0; i < nodos.size(); i++) {
-			archivoVRT.agregarFinal(nodos[i], k);
+			archivoVRT.agregarFinal(nodos[i], nodos.size());
 		}
 	}
 }

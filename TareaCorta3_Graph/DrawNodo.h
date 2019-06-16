@@ -23,22 +23,12 @@ public:
 	DrawNodo(int X, int Y, int W, int H, const char*L = 0) : Fl_Box(X, Y, W, H, L) {
 	}
 	void draw() {
-		//int cx = x();
-		//int cy = y();
-		//int cc = 10;
-		//while (cc > -0.5) {
-		//	fl_circle(cx, cy, cc);
-		//	cc = cc - 0.5;
-		//}
+		int cx = x();
+		int cy = y();
 
 		fl_color(FL_BLUE);
-		fl_pie(500, 200, 20 - 1, 20 - 1, 0, 360);
+		fl_pie(cx, cy, 25, 25, 0, 360);
 		//fl_color(color);	// reset color
-
-
-		fl_color(FL_RED);
-		fl_arc(500, 200, 20, 20, 0, 360);
-		//fl_circle(cx, cy, cc);
 	}
 
 };

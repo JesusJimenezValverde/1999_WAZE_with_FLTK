@@ -33,22 +33,7 @@ int main(int argc, char **argv) {
 	Fl_Window * ventana = new Fl_Window(20, 40, 1302, 700, "MIWA");
 	Procesar p(2, 668, 296, 30,ventana);
 
-	/*int cont = 0;
-	for (int j = 0; j < 25; j++) {
-		for (int i = 0; i < 40; i++) {
-			p.CAJITAS[cont] = new Fl_Box(305 + ((i*25)), 5 + (j*28), 4, 4, "");
-			p.CAJITAS[cont]->color(FL_BLUE);
-			p.CAJITAS[cont]->box(FL_FLAT_BOX);
-			cont++;
-		}
-	}*/
 
-	//Linea * linea1 = new Linea(2, 1, 1, 1); 
-	//linea1->color(FL_BLUE);
-	
-	//p.importarArchivo("ciudad.txt");
-	//p.crearVRT("ciudad");
-	//p.mostrar();
 	ventana->show();
 	return Fl::run();
 }

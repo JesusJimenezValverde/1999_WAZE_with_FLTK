@@ -57,16 +57,17 @@ struct Arco {
 
 
 
-class Procesar:Fl_Input
+class Procesar :Fl_Input
 {
-	public:
+public:
 	int k; //Cantidad de Vertices en el Grafo
 	vector<Nodo> nodos;
 	vector<Arco> arcos;
+	vector<DrawNodo*>dibujosN;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
 	Fl_Box *box;
-	//Fl_Box *box1;
+	Fl_Box *box1;
 	Fl_Text_Display *salidas;
 	Fl_Text_Buffer *tbuff;
 	Fl_Window *window;
@@ -84,16 +85,11 @@ class Procesar:Fl_Input
 	void abrir();
 	void mostrarArcos();
 	void leerTexto() {
-		cout << "Aqui toy" << endl;
 		//Limpia el espacio de entrada
 		string instruccion = this->value();
-
 		cout << "Instruccion a realizar: '" << instruccion << "'" << endl;
-
 		//Intrucciones
 		if (instruccion == "clear") {
-
-
 			//limpiar todos los iluminadosde nodos y arcos esto es en dinamica
 			//borra y reescribe toda la memoria en pantalla
 
@@ -106,13 +102,10 @@ class Procesar:Fl_Input
 		//	NodosGraficos[i] = nullptr;
 		//	Campos[i] = false;
 		//}
-
 		}
 		else if (instruccion == "close") {
 			//Cerrar grafo actual y limpiar areas de despliegue y cinta
 			// limpia los iluminados
-
-
 		}
 		else if (instruccion == "cleart") { //Limpiar la cinta
 			tbuff->text("");
@@ -191,14 +184,11 @@ class Procesar:Fl_Input
 				////*********************************************************************//
 			}
 			else if (sinstruccion7 == "import ") {
-				/*cout << "LLego un import " << endl;*/
-
-				string nombArchivo = instruccion.substr(7, instruccion.size());
-				//cout << "El archivo a leer es :" + sinstruccion7 + "." << endl;
-				cout << "Llegue al import"<<endl;
-				DrawNodo* nodoR = new DrawNodo(500, 10, 0, 0);
-				ventana->add(nodoR);
-				ventana->redraw();
+				//Import
+				string nombArchivo = instruccion.substr(8);
+				nombArchivo = nombArchivo.substr(0,nombArchivo.size()-1);
+				this->importarArchivo(nombArchivo);
+				dibujaGrafo();
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
 				const char * inst = instruccion.data();
@@ -215,9 +205,6 @@ class Procesar:Fl_Input
 				////*********************************************************************//
 			}
 		}
-
-
-
 		//Poner en la lista de instrucciones lo que tengo en numeroM******Falta****
 
 		//Reemplaza lo que hay en el cuadro de entrada de texto
@@ -245,11 +232,11 @@ class Procesar:Fl_Input
 	box->box(_FL_PLASTIC_THIN_DOWN_BOX);
 	box->labelfont(FL_BOLD + FL_ITALIC);
 	box->labelsize(32);
-	/*box1 = new Fl_Box(300, 1, 1000, 698, "");
+	box1 = new Fl_Box(300, 1, 1000, 698, "");
 	box1->color(FL_GRAY);
 	box1->box(FL_EMBOSSED_BOX);
 	box1->labelfont(FL_BOLD + FL_ITALIC);
-	box1->labelsize(32);*/
+	box1->labelsize(32);
 	salidas = new Fl_Text_Display(1, 1, 296, 666);
 	salidas->textcolor(FL_WHITE);
 	salidas->color(FL_BLACK);
@@ -258,6 +245,13 @@ class Procesar:Fl_Input
 	}
 	void nRedraw() {
 		ventana->redraw();
+	}
+	void dibujaGrafo() {
+		for (int i = 0; i < nodos.size(); i++) {
+			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,25,25));
+			ventana->add(dibujosN[i]);
+			ventana->redraw();
+		}
 	}
 };
 
@@ -276,8 +270,8 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			getline(archivo, red, ',');
 			getline(archivo, naux, '\n');
 			n = atoi(naux.c_str());
-			//cout << "La red: " << red << "con nodos: " << n << endl;
-			//cout << "\n" << "N: " << n << endl;
+			cout << "La red: " << red << " con nodos: " << n << endl;
+			cout << "\n" << "N: " << n << endl;
 		}
 		else if (c > 0 && c <= n) { //Carga nodos
 			getline(archivo, naux, ',');
@@ -285,7 +279,7 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			getline(archivo, y, '\n');
 			Nodo n(naux, x, y);
 			nodos.push_back(n);
-			//cout << "Nodo: " << naux << " X: " << x << " Y: " << y << "C: " << c << endl;
+			cout << "Nodo: " << naux << " X: " << x << " Y: " << y << endl;
 		}
 		else { //Carga arcos
 
@@ -296,8 +290,8 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			getline(archivo, vProm, '\n');
 			Arco a(origen, dest, dist, newMax, vProm);
 			arcos.push_back(a);
-			k++;
-			//cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << endl;
+			//k++; CUIDADO
+			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << endl;
 		}
 		c++;
 	}

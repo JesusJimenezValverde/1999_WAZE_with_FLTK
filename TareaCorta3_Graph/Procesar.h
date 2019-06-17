@@ -93,12 +93,29 @@ public:
 			//limpiar todos los iluminadosde nodos y arcos esto es en dinamica
 			//borra y reescribe toda la memoria en pantalla
 
-		//Limpia toda la pantalla ... por hacer ☼ ...
-		for (int i = 0; i < dibujosN.size(); i++) {
-			//cout << "Borrando " << i << endl;
-			ventana->remove(dibujosN[i]);
-		}
-		ventana->redraw();
+			//Limpia toda la pantalla ... por hacer ☼ ...
+			for (int i = 0; i < dibujosN.size(); i++) {
+				cout << "Borrando " << i << endl;
+				ventana->remove(dibujosN[i]);
+			}
+			for (int i = 0; i < dibujosA.size(); i++) {
+				ventana->remove(dibujosA[i]);
+			}
+			if (dibujosN.size() > 0) {
+				for (int i = dibujosN.size() - 1; i > 0; i--) {
+					dibujosN.pop_back();
+				}
+				dibujosN.pop_back();
+			}
+			if (dibujosA.size() > 0) {
+				for (int i = dibujosA.size() - 1; i > 0; i--) {
+					dibujosA.pop_back();
+				}
+				dibujosA.pop_back();
+			}
+
+			dibujaGrafo();
+			ventana->redraw();
 		}
 		else if (instruccion == "close") {
 			if (dibujosN.size() > 0 && nodos.size() > 0) {
@@ -111,8 +128,18 @@ public:
 				ventana->remove(dibujosN[0]);
 				dibujosN.pop_back();
 				nodos.pop_back();
-
-				tbuff->text("");
+				if (dibujosA.size() > 0 && arcos.size() > 0) {
+					for (int i = dibujosA.size() - 1; i > 0; i--) {
+						//cout << "Borrando " << i << endl;
+						ventana->remove(dibujosA[i]);
+						dibujosA.pop_back();
+						arcos.pop_back();
+					}
+					ventana->remove(dibujosA[0]);
+					dibujosA.pop_back();
+					arcos.pop_back();
+				}
+				tbuff->text("--- Red Cerrada ---\n");
 				salidas->buffer(tbuff);
 
 				ventana->redraw();
@@ -201,13 +228,40 @@ public:
 				cout << "LLego un arcs " << endl;
 
 				string nArcs = instruccion.substr(5, instruccion.size());
+				int nprincipal = atoi(nArcs.c_str());
+				if (nprincipal < dibujosN.size()) {
 
-				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
-				instruccion = instruccion + "\n";
-				const char * inst = instruccion.data();
-				tbuff->append(inst);
-				salidas->buffer(tbuff);
-				////*********************************************************************//
+					for (int i = 0; i < arcos.size(); i++) {
+						ventana->remove(dibujosA[i]);
+						if (arcos[i].origen == nprincipal) {
+							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
+							ventana->add(dibujosA[i]);
+						}
+						else {
+							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
+							ventana->add(dibujosA[i]);
+						}
+					}
+					ventana->redraw();
+					////*** Esto despues de hacer la instruccion si y solo si es valida ***//
+					instruccion = instruccion + "\n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+					////*********************************************************************//
+				}
+				else {
+					////** Esto despues de hacer la instruccion si y solo si es valida **//
+					instruccion = "El nodo no existe!!! \n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+					////*********************************************************************//
+				}
+
+
 			}
 			else if (sinstruccion5 == "open ") {
 				/*cout << "Llego un open" << endl;*/

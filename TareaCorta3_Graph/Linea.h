@@ -50,8 +50,8 @@ public:
 			fl_color(FL_RED);
 			fl_line_style(FL_SOLID, 3);
 			fl_line(cx, cy, llx, lly);
-			fl_line(cx, 61, 800 - 5, 61 - 4);
-			fl_line(800, 61, 800 - 5, 61 + 4);
+			//fl_line(cx, 61, 800 - 5, 61 - 4);
+			//fl_line(800, 61, 800 - 5, 61 + 4);
 		}
 
 	}

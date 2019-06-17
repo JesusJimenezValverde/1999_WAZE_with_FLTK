@@ -34,24 +34,103 @@ public:
 	*/
 	void draw() {
 		int color = w();
-		int cx = x()+12;
-		int cy = y()+12;
-		int llx = w()+12;
-		int lly = h()+12;
+		int cx = x()+12;// /Centro x,y del nodo de salida
+		int cy = y()+12; //Centro y del nodo de salida
+		int llx = w()+12; // Centro x del nodo de llegada
+		int lly = h()+12; // Centro y del nodo de llegada
 		if (iluminado == 1) { //Arco normal
 			fl_color(FL_BLACK);
-			fl_line_style(FL_SOLID, 3);
-			fl_line(cx, cy, llx, lly);
-			//fl_line(800, 61, 800 - 5, 61 - 4);
-			//fl_line(800, 61, 800 - 5, 61 + 4);
-
+			fl_line_style(FL_SOLID, 2);
+			if (cy == lly && cx < llx) {
+				fl_line(cx, cy, llx-12, lly);
+				fl_line(llx-12, lly, llx - 16, lly - 4);
+				fl_line(llx-12, lly, llx - 16, lly + 4);
+			}
+			else if(cy == lly && cx > llx) {
+				fl_line(cx, cy, llx + 12, lly);
+				fl_line(llx + 12, lly, llx + 16, lly - 4);
+				fl_line(llx + 12, lly, llx + 16, lly + 4);
+			}
+			else if (cy < lly && cx == llx) {
+				fl_line(cx, cy, llx, lly-12);
+				fl_line(llx, lly - 12, llx - 4, lly - 16);
+				fl_line(llx, lly - 12, llx + 4, lly - 16);
+			}
+			else if (cy > lly && cx == llx) {
+				fl_line(cx, cy, llx, lly + 12);
+				fl_line(llx, lly + 12, llx + 4, lly + 16);
+				fl_line(llx, lly + 12 , llx - 4, lly + 16);
+			}
+			else if (cx > llx + 12 && cy > lly + 12) {
+				fl_line(cx, cy, llx + 10, lly + 10);
+				fl_line(llx + 10, lly + 10, llx + 18, lly + 10);
+				fl_line(llx + 10, lly + 10, llx + 10, lly + 18);
+			}
+			else if (cx < llx - 12 && cy > lly - 12) {
+				fl_line(cx, cy, llx - 10, lly + 10);
+				fl_line(llx - 10, lly + 10, llx - 18, lly + 10);
+				fl_line(llx - 10, lly + 10, llx - 10, lly + 18);
+			}
+			else if (cx < llx - 12 && cy < lly - 12) {
+				fl_line(cx, cy, llx - 10, lly - 10);
+				fl_line(llx - 10, lly - 10, llx - 18, lly - 10);
+				fl_line(llx - 10, lly - 10, llx - 10, lly - 18);
+			}
+			else if (cx > llx + 12 && cy < lly - 12) {
+				fl_line(cx, cy, llx + 10, lly - 10);
+				fl_line(llx + 10, lly - 10, llx + 18, lly - 10);
+				fl_line(llx + 10, lly - 10, llx + 10, lly - 18);
+			}
+			else {
+				fl_line(cx, cy, llx, lly);
+			}
 		}
 		else if (iluminado == 2) { //Arco iluminado
 			fl_color(FL_RED);
 			fl_line_style(FL_SOLID, 3);
-			fl_line(cx, cy, llx, lly);
-			//fl_line(cx, 61, 800 - 5, 61 - 4);
-			//fl_line(800, 61, 800 - 5, 61 + 4);
+			if (cy == lly && cx < llx) {
+				fl_line(cx, cy, llx - 12, lly);
+				fl_line(llx - 12, lly, llx - 16, lly - 4);
+				fl_line(llx - 12, lly, llx - 16, lly + 4);
+			}
+			else if (cy == lly && cx > llx) {
+				fl_line(cx, cy, llx + 12, lly);
+				fl_line(llx + 12, lly, llx + 16, lly - 4);
+				fl_line(llx + 12, lly, llx + 16, lly + 4);
+			}
+			else if (cy < lly && cx == llx) {
+				fl_line(cx, cy, llx, lly - 12);
+				fl_line(llx, lly - 12, llx - 4, lly - 16);
+				fl_line(llx, lly - 12, llx + 4, lly - 16);
+			}
+			else if (cy > lly && cx == llx) {
+				fl_line(cx, cy, llx, lly + 12);
+				fl_line(llx, lly + 12, llx + 4, lly + 16);
+				fl_line(llx, lly + 12, llx - 4, lly + 16);
+			}
+			else if (cx > llx + 12 && cy > lly + 12) {
+				fl_line(cx, cy, llx + 10, lly + 10);
+				fl_line(llx + 10, lly + 10, llx + 18, lly + 10);
+				fl_line(llx + 10, lly + 10, llx + 10, lly + 18);
+			}
+			else if (cx < llx - 12 && cy > lly - 12) {
+				fl_line(cx, cy, llx - 10, lly + 10);
+				fl_line(llx - 10, lly + 10, llx - 18, lly + 10);
+				fl_line(llx - 10, lly + 10, llx - 10, lly + 18);
+			}
+			else if (cx < llx - 12 && cy < lly - 12) {
+				fl_line(cx, cy, llx - 10, lly - 10);
+				fl_line(llx - 10, lly - 10, llx - 18, lly - 10);
+				fl_line(llx - 10, lly - 10, llx - 10, lly - 18);
+			}
+			else if (cx > llx + 12 && cy < lly - 12) {
+				fl_line(cx, cy, llx + 10, lly - 10);
+				fl_line(llx + 10, lly - 10, llx + 18, lly - 10);
+				fl_line(llx + 10, lly - 10, llx + 10, lly - 18);
+			}
+			else {
+				fl_line(cx, cy, llx, lly);
+			}
 		}
 
 	}

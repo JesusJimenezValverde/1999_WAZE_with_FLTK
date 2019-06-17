@@ -25,6 +25,7 @@
 #include <fstream>
 #include <iostream>
 
+
 using namespace std;
 
 struct Nodo {
@@ -230,6 +231,8 @@ public:
 					cout << "FALLO LA APERTURA";
 				}
 				else {
+					archivo.close();
+					archivo2.close();
 					mensaje = "Los archivos .VRT y .ARC se abrieron exitosamente.\n";
 					tbuff->append(mensaje.data());
 					salidas->buffer(tbuff);
@@ -237,11 +240,25 @@ public:
 					for (int i = 0; i < archivoVRT.tam(); i++) {
 						nodos.push_back(archivoVRT.leer(i));
 					}
-					cout << "LLegué" << endl;
+					archivoARC = { nombArchivo + ".ARC" };
+					vector<BTreePage>paginas;
+					for (int i = 0; i < archivoARC.tam(); i++) {
+						paginas.push_back(archivoARC.leer(i));
+					}
+					//OPERACIONES MODULARES
+					int origen, destino;
+					for (int i = 0; i < paginas.size(); i++) {
+						for (int j = 0; j < 5; j++) {
+							if (paginas[i].key[j].valor != 0) {
+								TKey aux = paginas[i].key[j];
+								origen = (aux.valor / 1000) % 1000;
+								destino = aux.valor % 1000;
+								arcos.push_back(Arco(to_string(origen), to_string(destino), to_string(aux.distancia), to_string(aux.vMaxima), to_string(aux.vPromedio)));
+							}
+						}
+					}
 					this->dibujaGrafo();
-					cout << "LLegué" << endl;
 				}
-				////*********************************************************************//
 			}
 			else if (sinstruccion7 == "import ") {
 				//Import
@@ -373,7 +390,7 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			getline(archivo, dist, ',');
 			getline(archivo, vMax, ',');
 			getline(archivo, vProm, '\n');
-			Arco a(origen, dest, dist, newMax, vProm);
+			Arco a(origen, dest, dist, vMax, vProm);
 			arcos.push_back(a);
 			//k++; CUIDADO
 			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << endl;
@@ -422,6 +439,7 @@ inline void Procesar::crearARC(string nombre)
 		if (pagina.lleno == false) {
 			TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
 			pagina.insertarLlave(nueva);
+			cout << "vMaxima : " << arcos[i].vMaxima << endl;
 		}
 		else {
 			archivoARC.agregarFinal(pagina, pagina.t);

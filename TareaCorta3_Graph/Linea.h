@@ -41,6 +41,7 @@ public:
 		if (iluminado == 1) { //Arco normal
 			fl_color(FL_BLACK);
 			fl_line_style(FL_SOLID, 2);
+			//----------------Alineados--------------------
 			if (cy == lly && cx < llx) {
 				fl_line(cx, cy, llx-12, lly);
 				fl_line(llx-12, lly, llx - 16, lly - 4);
@@ -61,25 +62,70 @@ public:
 				fl_line(llx, lly + 12, llx + 4, lly + 16);
 				fl_line(llx, lly + 12 , llx - 4, lly + 16);
 			}
-			else if (cx > llx + 12 && cy > lly + 12) {
+			//Superior cubriendo
+			else if ((cx > llx - 12 && cx < llx) && cy < lly - 12) { // izq
+				fl_line(cx, cy, llx - 6, lly - 9);
+				fl_line(llx - 6, lly - 9, llx - 13, lly - 17);
+				fl_line(llx - 6, lly - 9, llx + 1, lly - 17);
+			}
+			else if ((cx < llx + 12 && cx > llx) && cy < lly - 12) { // der
+				fl_line(cx, cy, llx + 6, lly - 9);
+				fl_line(llx + 6, lly - 9, llx + 13, lly - 17);
+				fl_line(llx + 6, lly - 9, llx - 1, lly - 17);
+			}
+			//Inferior Cubriendo
+			else if ((cx > llx - 12 && cx < llx) && cy > lly + 12) { // izq
+				fl_line(cx, cy, llx - 6, lly + 9);
+				fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
+				fl_line(llx - 6, lly + 9, llx + 1, lly + 17);
+			}
+			else if ((cx < llx + 12 && cx > llx) && cy > lly + 12) { // der
+				fl_line(cx, cy, llx + 6, lly + 9);
+				fl_line(llx + 6, lly + 9, llx + 13, lly + 17);
+				fl_line(llx + 6, lly + 9, llx - 1, lly + 17);
+			}
+			//Derecha
+			else if ((cy < lly - 12 && cy > lly) && cx > llx + 12) { // arriba
+				//fl_line(cx, cy, llx - 6, lly + 9);
+				//fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
+				//fl_line(llx - 6, lly + 9, llx + 1, lly + 17);
+			}
+			else if ((cy < lly + 12 && cy > lly) && cx > llx + 12) { // abajo
+	/*			fl_line(cx, cy, llx + 6, lly + 9);
+				fl_line(llx + 6, lly + 9, llx + 13, lly + 17);
+				fl_line(llx + 6, lly + 9, llx - 1, lly + 17);*/
+			}
+			//Izquierda
+			//else if ((cx > llx - 12 && cx < llx) && cy > lly + 12) { // izq
+			//	fl_line(cx, cy, llx - 6, lly + 9);
+			//	fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
+			//	fl_line(llx - 6, lly + 9, llx + 1, lly + 17);
+			//}
+			//else if ((cx < llx + 12 && cx > llx) && cy > lly + 12) { // der
+			//	fl_line(cx, cy, llx + 6, lly + 9);
+			//	fl_line(llx + 6, lly + 9, llx + 13, lly + 17);
+			//	fl_line(llx + 6, lly + 9, llx - 1, lly + 17);
+			//}
+			//------------------ Angulo de 45 ------------------
+			else if (cx > llx + 12 && cy > lly + 12) { // lista
 				fl_line(cx, cy, llx + 10, lly + 10);
-				fl_line(llx + 10, lly + 10, llx + 18, lly + 10);
-				fl_line(llx + 10, lly + 10, llx + 10, lly + 18);
+				fl_line(llx + 10, lly + 10, llx + 18, lly + 6);
+				fl_line(llx + 10, lly + 10, llx + 6, lly + 18);
 			}
-			else if (cx < llx - 12 && cy > lly - 12) {
+			else if (cx < llx - 12 && cy > lly - 12) { // lista
 				fl_line(cx, cy, llx - 10, lly + 10);
-				fl_line(llx - 10, lly + 10, llx - 18, lly + 10);
-				fl_line(llx - 10, lly + 10, llx - 10, lly + 18);
+				fl_line(llx - 10, lly + 10, llx - 18, lly + 6);
+				fl_line(llx - 10, lly + 10, llx - 6, lly + 18);
 			}
-			else if (cx < llx - 12 && cy < lly - 12) {
+			else if (cx < llx - 12 && cy < lly - 12) { // lista
 				fl_line(cx, cy, llx - 10, lly - 10);
-				fl_line(llx - 10, lly - 10, llx - 18, lly - 10);
-				fl_line(llx - 10, lly - 10, llx - 10, lly - 18);
+				fl_line(llx - 10, lly - 10, llx - 18, lly - 6);
+				fl_line(llx - 10, lly - 10, llx - 6, lly - 18);
 			}
-			else if (cx > llx + 12 && cy < lly - 12) {
+			else if (cx > llx + 12 && cy < lly - 12) { // lista
 				fl_line(cx, cy, llx + 10, lly - 10);
-				fl_line(llx + 10, lly - 10, llx + 18, lly - 10);
-				fl_line(llx + 10, lly - 10, llx + 10, lly - 18);
+				fl_line(llx + 10, lly - 10, llx + 18, lly - 6);
+				fl_line(llx + 10, lly - 10, llx + 6, lly - 18);
 			}
 			else {
 				fl_line(cx, cy, llx, lly);
@@ -108,6 +154,8 @@ public:
 				fl_line(llx, lly + 12, llx + 4, lly + 16);
 				fl_line(llx, lly + 12, llx - 4, lly + 16);
 			}
+
+
 			else if (cx > llx + 12 && cy > lly + 12) {
 				fl_line(cx, cy, llx + 10, lly + 10);
 				fl_line(llx + 10, lly + 10, llx + 18, lly + 10);

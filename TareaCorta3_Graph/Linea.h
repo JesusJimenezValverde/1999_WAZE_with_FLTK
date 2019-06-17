@@ -62,7 +62,7 @@ public:
 				fl_line(llx, lly + 12, llx + 4, lly + 16);
 				fl_line(llx, lly + 12 , llx - 4, lly + 16);
 			}
-			//Superior cubriendo
+			//Superior cubriendo LISTO
 			else if ((cx > llx - 12 && cx < llx) && cy < lly - 12) { // izq
 				fl_line(cx, cy, llx - 6, lly - 9);
 				fl_line(llx - 6, lly - 9, llx - 13, lly - 17);
@@ -73,7 +73,7 @@ public:
 				fl_line(llx + 6, lly - 9, llx + 13, lly - 17);
 				fl_line(llx + 6, lly - 9, llx - 1, lly - 17);
 			}
-			//Inferior Cubriendo
+			//Inferior Cubriendo lISTO
 			else if ((cx > llx - 12 && cx < llx) && cy > lly + 12) { // izq
 				fl_line(cx, cy, llx - 6, lly + 9);
 				fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
@@ -86,26 +86,26 @@ public:
 			}
 			//Derecha
 			else if ((cy < lly - 12 && cy > lly) && cx > llx + 12) { // arriba
-				//fl_line(cx, cy, llx - 6, lly + 9);
-				//fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
-				//fl_line(llx - 6, lly + 9, llx + 1, lly + 17);
+				fl_line(cx, cy, llx + 9, lly - 6);
+				fl_line(llx + 9, lly - 6, llx + 17, lly - 13);
+				fl_line(llx + 9, lly - 6, llx + 17, lly + 1);
 			}
 			else if ((cy < lly + 12 && cy > lly) && cx > llx + 12) { // abajo
-	/*			fl_line(cx, cy, llx + 6, lly + 9);
-				fl_line(llx + 6, lly + 9, llx + 13, lly + 17);
-				fl_line(llx + 6, lly + 9, llx - 1, lly + 17);*/
+				fl_line(cx, cy, llx + 9, lly + 6);
+				fl_line(llx + 9, lly + 6, llx + 17, lly - 1);
+				fl_line(llx + 9, lly + 6, llx + 17, lly + 13);
 			}
 			//Izquierda
-			//else if ((cx > llx - 12 && cx < llx) && cy > lly + 12) { // izq
-			//	fl_line(cx, cy, llx - 6, lly + 9);
-			//	fl_line(llx - 6, lly + 9, llx - 13, lly + 17);
-			//	fl_line(llx - 6, lly + 9, llx + 1, lly + 17);
-			//}
-			//else if ((cx < llx + 12 && cx > llx) && cy > lly + 12) { // der
-			//	fl_line(cx, cy, llx + 6, lly + 9);
-			//	fl_line(llx + 6, lly + 9, llx + 13, lly + 17);
-			//	fl_line(llx + 6, lly + 9, llx - 1, lly + 17);
-			//}
+			else if ((cy < lly - 12 && cy > lly) && cx < llx - 12) { // arriba
+				fl_line(cx, cy, llx - 9, lly - 6);
+				fl_line(llx - 9, lly - 6, llx - 17, lly - 13);
+				fl_line(llx - 9, lly - 6, llx - 17, lly + 1);
+			}
+			else if ((cy < lly + 12 && cy > lly) && cx < llx - 12) { // abajo
+				fl_line(cx, cy, llx - 9, lly + 6);
+				fl_line(llx - 9, lly + 6, llx - 17, lly + 13);
+				fl_line(llx - 9, lly + 6, llx - 17, lly - 1);
+			}
 			//------------------ Angulo de 45 ------------------
 			else if (cx > llx + 12 && cy > lly + 12) { // lista
 				fl_line(cx, cy, llx + 10, lly + 10);

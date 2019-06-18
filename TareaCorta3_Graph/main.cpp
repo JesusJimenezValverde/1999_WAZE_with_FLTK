@@ -40,7 +40,20 @@
 
 
 //Prueba
-
+/*
+EJEMPLO DE INPUT
+5 9
+1 2 7
+1 4 2
+2 3 1
+2 4 2
+3 5 4
+4 2 3
+4 3 8
+4 5 5
+5 3 5
+1
+*/
 #include <stdio.h>
 #include <vector>
 #include <queue>

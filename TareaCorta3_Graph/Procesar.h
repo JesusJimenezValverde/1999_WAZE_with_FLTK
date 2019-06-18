@@ -230,17 +230,11 @@ public:
 				string nArcs = instruccion.substr(5, instruccion.size());
 				int nprincipal = atoi(nArcs.c_str());
 				if (nprincipal < dibujosN.size()) {
-
 					for (int i = 0; i < arcos.size(); i++) {
-						ventana->remove(dibujosA[i]);
 						if (arcos[i].origen == nprincipal) {
+							ventana->remove(dibujosA[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
-							ventana->add(dibujosA[i]);
-						}
-						else {
-							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
-								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
 							ventana->add(dibujosA[i]);
 						}
 					}

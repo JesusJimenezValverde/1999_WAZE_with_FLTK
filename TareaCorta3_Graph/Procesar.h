@@ -95,7 +95,7 @@ public:
 	vector<Arco2> ady[MAX]; 
 	float distancia[MAX];      
 	bool visitado[MAX]; 
-	float previo[MAX];
+	float previo[1000];
 	priority_queue< Arco2, vector<Arco2>, cmp > Q;
 	vector<int> padres;
 	vector<par> aIluminarSpt;
@@ -124,7 +124,10 @@ public:
 		for (int i = 0; i <= nodos.size(); ++i) {
 			distancia[i] = INF;  //inicializamos todas las distancias con valor infinito
 			visitado[i] = false; //inicializamos todos los vértices como no visitados
-			previo[i] = -1;      //inicializamos el previo del vertice i con -1
+			      //inicializamos el previo del vertice i con -1
+		}
+		for (int i = 0; i < 1000; i++) {
+			previo[i] = -1;
 		}
 	}
 
@@ -143,17 +146,23 @@ public:
 
 	//Impresion del camino mas corto desde el vertice inicial y final ingresados
 	void arrPadres(int destino) {
-		cout << "destino vale --> " << destino << endl;
 		if (previo[destino] != -1)    //si aun poseo un vertice previo
 			arrPadres(previo[destino]);  //recursivamente sigo explorando
 		//printf("%d ", destino);        //terminada la recursion imprimo los vertices recorridos
+		cout << "destino vale --> " << destino << endl;
 		padres.push_back(destino);
 	}
 
 	void fSpt() {
-		for (int i = 0; i < 10000; i++) {
+		if (aIluminarSpt.size() > 0) {
+			for (int i = 0; i < aIluminarSpt.size(); i++) {
+				aIluminarSpt.pop_back();
+			}
+		}
+		for (int i = 0; i < 1000; i++) {
 			if (previo[i] != -1) {
 				aIluminarSpt.push_back(par(previo[i], i));
+				cout << "Meti a iluminar : " << previo[i] << " , " << i << endl;
 			}
 		}
 	}
@@ -281,12 +290,19 @@ public:
 
 				if (inicial != -1 && inicial != destino) {
 
-
+					if (padres.size() > 0) {
+						for (int i = 0; i < padres.size(); i++) {
+							padres.pop_back();
+						}
+						padres.pop_back();
+					}
 					arrPadres(destino);//Esta llena un vector en orden que se llama padres del nodo inicial al final
+					
 					if (aIluminarSpt.size() > 0) {
 						for (int i = 0; i < aIluminarSpt.size(); i++) {
 							aIluminarSpt.pop_back();
 						}
+						aIluminarSpt.pop_back();
 					}
 
 					//Limpiar padres antes de eso
@@ -358,6 +374,7 @@ public:
 					for (int i = 0; i < aIluminarSpt.size(); i++) {
 						aIluminarSpt.pop_back();
 					}
+					aIluminarSpt.pop_back();
 				}
 
 				if (ady->size() > 0) {
@@ -378,6 +395,7 @@ public:
 				//Iluminando el Inicial del Spt///
 				for (int i = 0; i < nodos.size(); i++) {
 					ventana->remove(dibujosN[i]);
+					delete(dibujosN[i]);
 					if (nodos[i].nNodo == inicial) {
 						dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 2, 1);
 					}
@@ -389,16 +407,20 @@ public:
 
 				//Iluminando los arcos correspondientes al spt///
 
+
 				for (int i = 0; i < arcos.size(); i++) {
 					for (int j = 0; j < aIluminarSpt.size(); j++) {
-						ventana->remove(dibujosA[i]);
 						if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
+							ventana->remove(dibujosA[i]);
+							//delete(dibujosN[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
 							ventana->add(dibujosA[i]);
 							break;
 						}
 						else {
+							ventana->remove(dibujosA[i]);
+							//delete(dibujosN[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
 							ventana->add(dibujosA[i]);

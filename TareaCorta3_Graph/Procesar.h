@@ -143,9 +143,10 @@ public:
 
 	//Impresion del camino mas corto desde el vertice inicial y final ingresados
 	void arrPadres(int destino) {
+		cout << "destino vale --> " << destino << endl;
 		if (previo[destino] != -1)    //si aun poseo un vertice previo
 			arrPadres(previo[destino]);  //recursivamente sigo explorando
-		printf("%d ", destino);        //terminada la recursion imprimo los vertices recorridos
+		//printf("%d ", destino);        //terminada la recursion imprimo los vertices recorridos
 		padres.push_back(destino);
 	}
 
@@ -274,17 +275,29 @@ public:
 			string sinstruccion7 = instruccion.substr(0, 7);
 
 			if (sinstruccion == "to ") {
-				cout << "LLego un to" << endl;
-				if (inicial != -1) {
-					string rInstruccion = instruccion.substr(3, instruccion.size());
-					int destino = std::atoi(rInstruccion.c_str());
-					arrPadres(destino);
-					printf("Que cagada\n");
 
+				string rInstruccion = instruccion.substr(3, instruccion.size());
+				int destino = std::atoi(rInstruccion.c_str());
+
+				if (inicial != -1 && inicial != destino) {
+
+
+					arrPadres(destino);//Esta llena un vector en orden que se llama padres del nodo inicial al final
+					if (aIluminarSpt.size() > 0) {
+						for (int i = 0; i < aIluminarSpt.size(); i++) {
+							aIluminarSpt.pop_back();
+						}
+					}
+
+					//Limpiar padres antes de eso
+
+					for (int i = 1; i < padres.size(); i++) {
+						aIluminarSpt.push_back(par(padres[i - 1], padres[i]));
+					}
 					//Iluminando el Inicial del Spt///
 					for (int i = 0; i < nodos.size(); i++) {
 						ventana->remove(dibujosN[i]);
-						if (nodos[i].nNodo == inicial) {
+						if (nodos[i].nNodo == inicial || nodos[i].nNodo == destino) {
 							dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 2, 1);
 						}
 						else {
@@ -296,8 +309,8 @@ public:
 					//Iluminando los arcos correspondientes al spt///
 
 					for (int i = 0; i < arcos.size(); i++) {
+						ventana->remove(dibujosA[i]);
 						for (int j = 0; j < aIluminarSpt.size(); j++) {
-							ventana->remove(dibujosA[i]);
 							if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
 								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
@@ -339,10 +352,17 @@ public:
 
 				string rInstruccion = instruccion.substr(4, instruccion.size());
 				inicial = std::atoi(rInstruccion.c_str());
+
 				//--------------Limpiar a iluminar ---------------//
 				if (aIluminarSpt.size() > 0) {
 					for (int i = 0; i < aIluminarSpt.size(); i++) {
 						aIluminarSpt.pop_back();
+					}
+				}
+
+				if (ady->size() > 0) {
+					for (int i = 0; i < ady->size(); i++) {
+						ady->pop_back();
 					}
 				}
 				//----------Aqui termina-------------------//

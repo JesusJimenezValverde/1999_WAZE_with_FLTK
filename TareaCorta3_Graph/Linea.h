@@ -134,7 +134,7 @@ public:
 			}
 		}
 		else if (iluminado == 2) { //Arco iluminado
-			fl_color(FL_RED);
+			fl_color(FL_YELLOW);
 			fl_line_style(FL_SOLID, 3);
 			//----------------Alineados--------------------
 			if (cy == lly && cx < llx) {

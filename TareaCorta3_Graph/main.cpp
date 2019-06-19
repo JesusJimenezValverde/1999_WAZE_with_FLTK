@@ -24,7 +24,7 @@
 #include <string>
 #include "Procesar.h"
 #include "string.h" 
-#include "bits/stdc++.h"
+//#include "bits/stdc++.h"
 
 int main(int argc, char **argv) {
 

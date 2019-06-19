@@ -412,7 +412,7 @@ public:
 					for (int j = 0; j < aIluminarSpt.size(); j++) {
 						if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
 							ventana->remove(dibujosA[i]);
-							//delete(dibujosN[i]);
+							delete(dibujosA[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
 							ventana->add(dibujosA[i]);
@@ -420,7 +420,7 @@ public:
 						}
 						else {
 							ventana->remove(dibujosA[i]);
-							//delete(dibujosN[i]);
+							delete(dibujosA[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
 							ventana->add(dibujosA[i]);

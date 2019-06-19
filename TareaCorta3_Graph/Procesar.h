@@ -72,6 +72,14 @@ struct cmp {
 };
 //
 
+struct par {
+	int salida;
+	int llegada;
+	par(int xsalida, int xllegada) {
+		salida = xsalida;
+		llegada = xllegada;
+	}
+};
 
 class Procesar :Fl_Input
 {
@@ -83,13 +91,16 @@ public:
 	vector<Linea*>dibujosA;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
+
 	vector<Arco2> ady[MAX]; 
 	float distancia[MAX];      
 	bool visitado[MAX]; 
 	float previo[MAX];
 	priority_queue< Arco2, vector<Arco2>, cmp > Q;
 	vector<int> padres;
-	vector<int> aIluminarSpt;
+	vector<par> aIluminarSpt;
+	int inicial = -1;
+
 	string nArchivo;
 	Fl_Box *box;
 	Fl_Box *box1;
@@ -119,12 +130,14 @@ public:
 
 	//Paso de relajacion
 	void relajacion(int actual, int adyacente, float peso) {
-		cout << "dIST ACTUAL" << distancia[actual] + peso << " , " << distancia[adyacente] << endl;
 		//Si la distancia del origen al vertice actual + peso de su arista es menor a la distancia del origen al vertice adyacente
 		if (distancia[actual] + peso < distancia[adyacente]) {
 			distancia[adyacente] = distancia[actual] + peso;  //relajamos el vertice actualizando la distancia
 			previo[adyacente] = actual;                         //a su vez actualizamos el vertice previo
 			Q.push(Arco2(adyacente, distancia[adyacente])); //agregamos adyacente a la cola de prioridad
+			//cout << "------------------------------------" << endl;
+			//cout << "Meto " << actual << " , " << adyacente << endl;
+			//aIluminarSpt.push_back(par(actual, adyacente)); //Agregandolo a los arcos que se tienen que iluminar cuando se ilumina spt
 		}
 	}
 
@@ -136,35 +149,46 @@ public:
 		padres.push_back(destino);
 	}
 
+	void fSpt() {
+		for (int i = 0; i < 10000; i++) {
+			if (previo[i] != -1) {
+				aIluminarSpt.push_back(par(previo[i], i));
+			}
+		}
+	}
+
 	void mSPT(int inicial) {
 		init(); //inicializamos nuestros arreglos
 		
 		Q.push(Arco2(inicial, 0)); //Insertamos el vértice inicial en la Cola de Prioridad
+		//aIluminarSpt.push_back(par(inicial, 0));
 		distancia[inicial] = 0;      //Este paso es importante, inicializamos la distancia del inicial como 0
 		int actual, adyacente;
 		float peso;
 		while (!Q.empty()) {  
 			cout << "AQUI" << endl;//Mientras cola no este vacia
 			actual = Q.top().first;            //Obtengo de la cola el nodo con menor peso, en un comienzo será el inicial
-			Q.pop();                           //Sacamos el elemento de la cola
+			Q.pop();     //Sacamos el elemento de la cola
+			//aIluminarSpt.pop_back();
 			if (visitado[actual]) continue; //Si el vértice actual ya fue visitado entonces sigo sacando elementos de la cola
 			visitado[actual] = true;         //Marco como visitado el vértice actual
 
 			for (int i = 0; i < ady[actual].size(); ++i) { //reviso sus adyacentes del vertice actual
-				
 				adyacente = ady[actual][i].first;   //id del vertice adyacente
-				cout << "AQUI :" <<actual<< endl;
-				cout << "AQUI :" <<adyacente << endl;
 				peso = ady[actual][i].second;        //peso de la arista que une actual con adyacente ( actual , adyacente )
-				cout << "Peso" << peso << endl;
 				if (!visitado[adyacente]) {        //si el vertice adyacente no fue visitado
 					relajacion(actual, adyacente, peso); //realizamos el paso de relajacion
 				}
 			}
 		}
 		printf("Distancias mas cortas iniciando en vertice %d\n", inicial);
-		for (int i = 0; i <= nodos.size(); ++i) {
-			printf("Vertice %d , distancia mas corta = %f\n", i, distancia[i]);
+		for (int i = 0; i < nodos.size(); ++i) {
+			if (distancia[i] != 10000) {
+				printf("Vertice %d , distancia mas corta = %f\n", i, distancia[i]);
+			}
+			else {
+				cout << "Nodo " << i << " inalcanzable." << endl;
+			}
 		}
 
 
@@ -251,26 +275,77 @@ public:
 
 			if (sinstruccion == "to ") {
 				cout << "LLego un to" << endl;
+				if (inicial != -1) {
+					string rInstruccion = instruccion.substr(3, instruccion.size());
+					int destino = std::atoi(rInstruccion.c_str());
+					arrPadres(destino);
+					printf("Que cagada\n");
 
-				string rInstruccion = instruccion.substr(3, instruccion.size());
-				int destino = std::atoi(rInstruccion.c_str());
-				arrPadres(destino);
-				printf("Que cagada\n");
+					//Iluminando el Inicial del Spt///
+					for (int i = 0; i < nodos.size(); i++) {
+						ventana->remove(dibujosN[i]);
+						if (nodos[i].nNodo == inicial) {
+							dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 2, 1);
+						}
+						else {
+							dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 1, 1);
+						}
+						ventana->add(dibujosN[i]);
+					}
 
-				//**** Esto despues de hacer la instruccion si y solo si es valida ****//
-				instruccion = instruccion + "\n";
-				const char * inst = instruccion.data();
-				tbuff->append(inst);
-				salidas->buffer(tbuff);
+					//Iluminando los arcos correspondientes al spt///
 
-				//*********************************************************************//
+					for (int i = 0; i < arcos.size(); i++) {
+						for (int j = 0; j < aIluminarSpt.size(); j++) {
+							ventana->remove(dibujosA[i]);
+							if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
+								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
+								ventana->add(dibujosA[i]);
+								break;
+							}
+							else {
+								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
+								ventana->add(dibujosA[i]);
+							}
+						}
+					}
+					ventana->redraw();
+
+					//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+					instruccion = instruccion + "\n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+
+					//*********************************************************************//
+				}
+				else {
+					//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+					instruccion = "-- No se ha ejecutado el spt -- \n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+
+					//*********************************************************************//
+				}
+
+
 
 			}
 			else if (sinstruccion4 == "spt ") {
 				cout << "LLego un spt " << endl;
 
 				string rInstruccion = instruccion.substr(4, instruccion.size());
-				int inicial = std::atoi(rInstruccion.c_str());
+				inicial = std::atoi(rInstruccion.c_str());
+				//--------------Limpiar a iluminar ---------------//
+				if (aIluminarSpt.size() > 0) {
+					for (int i = 0; i < aIluminarSpt.size(); i++) {
+						aIluminarSpt.pop_back();
+					}
+				}
+				//----------Aqui termina-------------------//
 
 				for (int i = 0; i < arcos.size(); i++) {
 					ady[arcos[i].origen].push_back(Arco2(arcos[i].destino, arcos[i].peso));
@@ -278,6 +353,39 @@ public:
 
 				mSPT(inicial);
 
+				fSpt();
+
+				//Iluminando el Inicial del Spt///
+				for (int i = 0; i < nodos.size(); i++) {
+					ventana->remove(dibujosN[i]);
+					if (nodos[i].nNodo == inicial) {
+						dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 2, 1);
+					}
+					else {
+						dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 1, 1);
+					}
+					ventana->add(dibujosN[i]);
+				}
+
+				//Iluminando los arcos correspondientes al spt///
+
+				for (int i = 0; i < arcos.size(); i++) {
+					for (int j = 0; j < aIluminarSpt.size(); j++) {
+						ventana->remove(dibujosA[i]);
+						if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
+							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
+							ventana->add(dibujosA[i]);
+							break;
+						}
+						else {
+							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
+							ventana->add(dibujosA[i]);
+						}
+					}
+				}
+				ventana->redraw();
 
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
@@ -327,10 +435,15 @@ public:
 				int nprincipal = atoi(nArcs.c_str());
 				if (nprincipal < dibujosN.size()) {
 					for (int i = 0; i < arcos.size(); i++) {
+						ventana->remove(dibujosA[i]);
 						if (arcos[i].origen == nprincipal) {
-							ventana->remove(dibujosA[i]);
 							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
+							ventana->add(dibujosA[i]);
+						}
+						else {
+							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
 							ventana->add(dibujosA[i]);
 						}
 					}

@@ -58,7 +58,7 @@ struct Arco {
 		vMaxima = atoi(vM.c_str());
 		vPromedio = atoi(vProm.c_str());
 		peso = (distancia/vPromedio);
-		cout << "peso : " << peso << "  distancia : " << distancia << "  promedio : " << vPromedio << endl;
+		//cout << "peso : " << peso << "  distancia : " << distancia << "  promedio : " << vPromedio << endl;
 	}
 
 };
@@ -591,24 +591,65 @@ public:
 					archAbierto = true;
 					tbuff->append(mensaje.data());
 					salidas->buffer(tbuff);
+
+					archivo.open(nombArchivo+".txt",ios::in);
+					int c = 0, cantNodos, cantArc = 0;
+					string ax;
+					while (archivo.good()) {
+						if (c == 0) { //Carga encabezado
+							getline(archivo, ax, ',');
+							getline(archivo, ax, '\n');
+							cantNodos = atoi(ax.c_str());
+							cout << "La red con nodos: " << cantNodos << endl;
+						}
+						else if (c > 0 && c <= cantNodos) { //Carga nodos
+							getline(archivo, ax ,',');
+							getline(archivo, ax, ',');
+							getline(archivo, ax, '\n');
+						}
+						else { //Carga arcos
+							getline(archivo, ax, ',');
+							getline(archivo, ax, ',');
+							getline(archivo, ax, ',');
+							getline(archivo, ax, ',');
+							getline(archivo, ax, '\n');
+							cantArc++;
+						}
+						c++;
+					}
+					archivo.close();
+					int cantPaginas = 0;
+					if (cantArc > 9 && cantArc % 9 == 0) {
+						cantPaginas = cantArc / 9;
+					}
+					else if (cantArc < 9) {
+						cantPaginas = 1;
+					}
+					else {
+						cantPaginas = cantArc / 9;
+						cantPaginas++;
+					}
+					cout << "HAY " << cantPaginas << " PAGINAS";
+					//********************WAIT************************
 					archivoVRT = { nombArchivo+".VRT" };
 					for (int i = 0; i < archivoVRT.tam(); i++) {
 						nodos.push_back(archivoVRT.leer(i));
 					}
 					archivoARC = { nombArchivo + ".ARC" };
 					vector<BTreePage>paginas;
-					for (int i = 0; i < archivoARC.tam(); i++) {
+					for (int i = 0; i < cantPaginas; i++) {
 						paginas.push_back(archivoARC.leer(i));
 					}
 					//OPERACIONES MODULARES
 					int origen, destino;
 					for (int i = 0; i < paginas.size(); i++) {
-						for (int j = 0; j < 5; j++) {
+						for (int j = 0; j < 9; j++) {
 							if (paginas[i].key[j].valor != 0) {
 								TKey aux = paginas[i].key[j];
 								origen = (aux.valor / 1000) % 1000;
 								destino = aux.valor % 1000;
 								arcos.push_back(Arco(to_string(origen), to_string(destino), to_string(aux.distancia), to_string(aux.vMaxima), to_string(aux.vPromedio)));
+								cout << "\n\n " << paginas[i].key[j].valor << endl;
 							}
 						}
 					}
@@ -707,7 +748,6 @@ public:
 		ventana->redraw();
 	}
 	void dibujaGrafo() {
-		cout <<"Cant de nodos: "<< nodos.size() << endl;
 
 		if (dibujosN.size() > 0 && nodos.size() > 0) {
 			for (int i = dibujosN.size() - 1; i > 0; i--) {
@@ -717,11 +757,12 @@ public:
 			ventana->remove(dibujosN[0]);
 			dibujosN.pop_back();
 		}
+		cout << "\n\n PEPEPE " << nodos.size() << endl;
 		for (int i = 0; i < nodos.size(); i++) {
 			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,1,1));
 			ventana->add(dibujosN[i]);
 		}
-		cout << arcos.size() << endl;
+		cout <<"\n\n BLA BLA "<< arcos.size() << endl;
 		for (int i = 0; i < arcos.size(); i++) {
 			dibujosA.push_back(new Linea(nodos[arcos[i].origen].x+300,nodos[arcos[i].origen].y, 
 				nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y,1));
@@ -813,18 +854,48 @@ inline void Procesar::crearARC(string nombre)
 {
 	archivoARC = { nombre + ".ARC" };
 	BTreePage pagina;
-	for (int i = 0; i < arcos.size(); i++) {
-		if (pagina.lleno == false) {
-			TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
+	int i = 0;
+	int pag = 0;
+	while (i < arcos.size()) {
+		if (pag < 9) {
+			TKey nueva{ arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio };
 			pagina.insertarLlave(nueva);
-			cout << "vMaxima : " << arcos[i].vMaxima << endl;
+			pag++;
+			i++;
 		}
 		else {
 			archivoARC.agregarFinal(pagina, pagina.t);
-			cout << "Meti una pagina"<<endl;
-			BTreePage pagina{};
+			pagina.limpiar();
+			pag = 0;
 		}
+
 	}
+
+	//for (int i = 0; i < arcos.size(); i++) {
+	//	if (pagina.lleno == false) {
+	//		TKey nueva{arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio};
+	//		pagina.insertarLlave(nueva);
+	//		cout << "Showkeys1" << endl;
+	//		pagina.showKeys();
+	//		cout << "vMaxima : " << arcos[i].vMaxima << endl;
+	//		if ((((cont*8)+i) % 8) == 0 && (i != 0)) {
+	//			pagina.lleno = true;
+	//			cont++;
+	//			
+	//		}
+	//		//if (i == 8)
+	//		//	pagina.lleno = true;
+	//	}
+	//	else {
+	//		archivoARC.agregarFinal(pagina, pagina.t);
+	//		cout << "Meti una pagina"<<endl;
+	//		pagina.limpiar();
+	//		TKey nueva{ arcos[i].origen,arcos[i].destino,(double)arcos[i].distancia,(double)arcos[i].vMaxima,(double)arcos[i].vPromedio };
+	//		pagina.insertarLlave(nueva);
+	//		cout << "Showkeys" << endl;
+	//		pagina.showKeys();
+	//	}
+	//}
 	if (!pagina.vacia()) {
 		archivoARC.agregarFinal(pagina, pagina.t);
 	}

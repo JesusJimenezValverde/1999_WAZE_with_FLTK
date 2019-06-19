@@ -46,6 +46,12 @@ struct BTreePage {
 			key[i] = llave;
 		}
 	}
+	void limpiar() {
+		for (int i = 0; i < M; i++) {
+			key[i] = TKey{};
+		}
+		lleno = false;
+	}
 	/*BTreePage(TKey k, pIndex izq, pIndex der) {
 		addr = 0;
 		n = 1;

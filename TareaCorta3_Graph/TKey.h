@@ -23,8 +23,8 @@ struct TKey {
 	}
 	TKey() {
 		valor = 0;
-		distancia = 0;
-		vMaxima = 0;
-		vPromedio = 0;
+		distancia = 0.0;
+		vMaxima = 0.0;
+		vPromedio = 0.0;
 	}
 };

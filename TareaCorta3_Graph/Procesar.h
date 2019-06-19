@@ -617,30 +617,43 @@ public:
 			}
 			else if (sinstruccion7 == "import ") {
 				//Import
-				//
 				inicial = -1;
-
-				string nombArchivo = instruccion.substr(8);
-				nombArchivo = nombArchivo.substr(0,nombArchivo.size()-1);
-				this->importarArchivo(nombArchivo);
-				nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 4);
-				cout << nombArchivo << endl;
-				this->crearVRT(nombArchivo);
-				this->crearARC(nombArchivo);
-				dibujaGrafo();
-				for (int i = 0; i < arcos.size(); i++) {
-					cout << "Pesoooooooooooo:" << arcos[i].peso << endl;
+				string auxa = instruccion.substr(7);
+				string val =  to_string(auxa[0]);
+				ifstream prueba;
+				if (auxa != "" && auxa[0]=='"') {
+					string nombArchivo = instruccion.substr(8);
+					nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 1);
+					prueba.open(nombArchivo,ios::binary);
+					if (!prueba.fail()) {
+						prueba.close();
+						this->importarArchivo(nombArchivo);
+						nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 4);
+						cout << "Se ha abierto la ciudad: '" << nombArchivo << "'" << endl;
+						this->crearVRT(nombArchivo);
+						this->crearARC(nombArchivo);
+						dibujaGrafo();
+						////**** Esto despues de hacer la instruccion si y solo si es valida ****//
+						archAbierto = true;
+						instruccion = instruccion + "\n";
+						const char * inst = instruccion.data();
+						tbuff->append(inst);
+						salidas->buffer(tbuff);
+						string aux = "Informacion Leida:\nVertices: " + to_string(nodos.size()) + "\nArcos: " + to_string(arcos.size()) + "\n";
+						tbuff->append(aux.data());
+						salidas->buffer(tbuff);
+					}
+					else {
+						string aux = "El archivo indicado no existe\n";
+						tbuff->append(aux.data());
+						salidas->buffer(tbuff);
+					}
 				}
-				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
-				archAbierto = true;
-				instruccion = instruccion + "\n";
-				const char * inst = instruccion.data();
-				tbuff->append(inst);
-				salidas->buffer(tbuff);
-				string aux = "Informacion Leida:\nVertices: " + to_string(nodos.size()) + "\nArcos: " + to_string(arcos.size())+"\n";
-				tbuff->append(aux.data());
-				salidas->buffer(tbuff);
-
+				else {
+					auxa = "Instrucción Inválida\n";
+					tbuff->append(auxa.data());
+					salidas->buffer(tbuff);
+				}
 				////*********************************************************************//
 			}
 			else {
@@ -729,6 +742,7 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 	int c = 0;
 	int f = 0;
 	k = 0;
+
 	while (archivo.good()) {
 		if (c == 0) { //Carga encabezado
 			getline(archivo, red, ',');
@@ -757,12 +771,13 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			arcos.push_back(a);
 			//k++; CUIDADO
 
-			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << " peso : "<< a.peso << endl;
+			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << " peso : " << a.peso << endl;
 		}
 		c++;
 	}
 	contarArcos(arcos.size(), nodos.size());
-}
+}	
+
 void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida
 {
 	for (int j = 0; j < arcos.size(); j++) {

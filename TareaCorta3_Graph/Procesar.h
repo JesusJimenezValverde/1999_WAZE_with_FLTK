@@ -24,6 +24,8 @@
 #include <fstream>
 #include <iostream>
 #include <queue>
+#include "Carrito.h"
+#include "Fl_Tooltip.h"
 
 #define MAX 10000
 #define Arco2 pair< int , float >
@@ -99,6 +101,8 @@ public:
 	priority_queue< Arco2, vector<Arco2>, cmp > Q;
 	vector<int> padres;
 	vector<par> aIluminarSpt;
+
+	Carrito *carrito;
 
 	bool archAbierto = false;
 	int inicial = -1;
@@ -291,7 +295,7 @@ public:
 			string sinstruccion4 = instruccion.substr(0, 4);
 			string sinstruccion5 = instruccion.substr(0, 5);
 			string sinstruccion7 = instruccion.substr(0, 7);
-
+			
 			if (sinstruccion == "to ") {
 
 				string rInstruccion = instruccion.substr(3, instruccion.size());
@@ -336,7 +340,7 @@ public:
 
 							//Iluminando los arcos correspondientes al la ruta correspondiente///
 
-
+							int valorDistancia = 0;
 							for (int i = 0; i < arcos.size(); i++) {
 								for (int j = 0; j < aIluminarSpt.size(); j++) {
 									if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
@@ -345,6 +349,7 @@ public:
 										dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
 											nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
 										ventana->add(dibujosA[i]);
+										valorDistancia += arcos[i].peso;
 										break;
 									}
 									else {
@@ -371,13 +376,15 @@ public:
 									instruccion = instruccion + to_string(padres[i]) + "\n";
 								}
 							}
+							instruccion = instruccion +" -> Peso: " + to_string(valorDistancia) + "\n";
 							inst = instruccion.data();
 							tbuff->append(inst);
+
 							salidas->buffer(tbuff);
 							//*********************************************************************//
 						}
 						else {
-							//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+							//**** Notificacion inválida ****//
 							instruccion = "--> " + instruccion + "\n";
 							const char * inst = instruccion.data();
 							tbuff->append(inst);
@@ -407,6 +414,144 @@ public:
 					////*********************************************************************//
 				}
 			}
+			else if (sinstruccion4 == "toa ") {
+				string rInstruccion = instruccion.substr(3, instruccion.size());
+				int destino = std::atoi(rInstruccion.c_str());
+				if (archAbierto == true) {
+					if (inicial != -1 && inicial != destino) {
+
+						if (padres.size() > 0) {
+							for (int i = 0; i < padres.size(); i++) {
+								padres.pop_back();
+							}
+							padres.pop_back();
+						}
+
+						arrPadres(destino);//Esta llena un vector en orden que se llama padres del nodo inicial al final
+						if (padres.size() > 1) {
+							if (aIluminarSpt.size() > 0) {
+								for (int i = aIluminarSpt.size(); i > 0; i--) {
+									aIluminarSpt.pop_back();
+								}
+							}
+
+							//Limpiar padres antes de eso//
+
+							for (int i = 1; i < padres.size(); i++) {
+								aIluminarSpt.push_back(par(padres[i - 1], padres[i]));
+							}
+
+
+							//Iluminando el Inicial del Spt///
+							for (int i = 0; i < nodos.size(); i++) {
+								ventana->remove(dibujosN[i]);
+								delete(dibujosN[i]);
+								if (nodos[i].nNodo == inicial || nodos[i].nNodo == destino) {
+									dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 2, 1);
+								}
+								else {
+									dibujosN[i] = new DrawNodo(nodos[i].x + 300, nodos[i].y, 1, 1);
+								}
+								ventana->add(dibujosN[i]);
+							}
+
+							//Iluminando los arcos correspondientes al la ruta correspondiente///
+
+							int valorDistancia = 0;
+							for (int i = 0; i < arcos.size(); i++) {
+								for (int j = 0; j < aIluminarSpt.size(); j++) {
+									if (arcos[i].origen == aIluminarSpt[j].salida && arcos[i].destino == aIluminarSpt[j].llegada) {
+										ventana->remove(dibujosA[i]);
+										delete(dibujosA[i]);
+										dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+											nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 2);
+										ventana->add(dibujosA[i]);
+										valorDistancia += arcos[i].peso;
+										break;
+									}
+									else {
+										ventana->remove(dibujosA[i]);
+										delete(dibujosA[i]);
+										dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+											nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
+										ventana->add(dibujosA[i]);
+									}
+								}
+							}
+							ventana->redraw();
+
+							//------------Funcion que hace que se mueva-------------//
+							for (int i = 0; i < padres.size() - 1; i++) {
+								int xS, yS, xLL, yLL; //xyS son las coordenadas de salida// xyLL son las direcciones de llegada
+								for (int j = 0; j < nodos.size(); j++) {
+									if (nodos[j].nNodo == padres[i]) {
+										xS = nodos[j].x;
+										yS = nodos[j].y;
+									}
+									if (nodos[j].nNodo == padres[i + 1]) {
+										xLL = nodos[j].x;
+										yLL = nodos[j].y;
+									}
+								}
+								
+							}
+							//carrito = new Carrito(xS, yS, 1, 1);
+
+
+
+							//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+							instruccion = "--> " + instruccion + "\n";
+							const char * inst = instruccion.data();
+							tbuff->append(inst);
+							instruccion = "";
+							for (int i = 0; i < padres.size(); i++) {
+								if (i < padres.size() - 1) {
+									instruccion = instruccion + to_string(padres[i]) + " --> ";
+								}
+								else {
+									instruccion = instruccion + to_string(padres[i]) + "\n";
+								}
+							}
+							instruccion = instruccion + " -> Peso: " + to_string(valorDistancia) + "\n";
+							inst = instruccion.data();
+							tbuff->append(inst);
+
+							salidas->buffer(tbuff);
+							//*********************************************************************//
+						}
+						else {
+							//**** Notificacion inválida ****//
+							instruccion = "--> " + instruccion + "\n";
+							const char * inst = instruccion.data();
+							tbuff->append(inst);
+							instruccion = " -- Nodo Inalcanzable -- \n";
+
+							inst = instruccion.data();
+							tbuff->append(inst);
+							salidas->buffer(tbuff);
+						}
+					}
+					else {
+						//**** Esto despues de hacer la instruccion si y solo si es valida ****//
+						instruccion = "-- No se ha ejecutado el spt -- \n";
+						const char * inst = instruccion.data();
+						tbuff->append(inst);
+						salidas->buffer(tbuff);
+
+						//*********************************************************************//
+					}
+				}
+				else {
+					////****  Notificacion de salida    ****//
+					instruccion = "-- No se ha abierto \n   ningun archivo \n";
+					const char * inst = instruccion.data();
+					tbuff->append(inst);
+					salidas->buffer(tbuff);
+					////*********************************************************************//
+				}
+
+			}
+			
 			else if (sinstruccion4 == "spt ") {
 				string rInstruccion = instruccion.substr(4, instruccion.size());
 				inicial = std::atoi(rInstruccion.c_str());

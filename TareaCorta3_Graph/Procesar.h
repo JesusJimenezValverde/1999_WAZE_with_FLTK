@@ -11,7 +11,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Progress.H>
-#include <vector>
 #include <iostream>
 #include "ArbolRN.h"
 #include "Permutacion.h"
@@ -24,14 +23,19 @@
 #include "DrawNodo.h"
 #include <fstream>
 #include <iostream>
+#include <queue>
 
+#define MAX 10000
+#define Arco2 pair< int , float >
+#define INF 10000
 
 using namespace std;
 
+
 struct Nodo {
 	int nNodo; //Numero de Nodo
-	int x; //Coordenada X
-	int y; //Coordenada Y
+	int x;	   //Coordenada X
+	int y;     //Coordenada Y
 	int gradoEntrada = 0;
 	int gradoSalida = 0;
 	Nodo() { nNodo = 0;  x = 0; y = 0; gradoEntrada = 0; gradoSalida = 0; };
@@ -42,20 +46,31 @@ struct Nodo {
 struct Arco {
 	int origen;
 	int destino;
-	int distancia;
+	float distancia;
 	int vMaxima;
-	int vPromedio;
-	Arco() { origen = 0; destino = 0; distancia = 0; vMaxima = 0; vPromedio = 0; };
+	float vPromedio;
+	float peso;
+	Arco() { origen = 0; destino = 0; distancia = 0; vMaxima = 0; vPromedio = 0; peso = 0; };
 	Arco(string org, string dest, string dist, string vM, string vProm) {
 		origen = atoi(org.c_str());
 		destino = atoi(dest.c_str());
 		distancia = atoi(dist.c_str());
 		vMaxima = atoi(vM.c_str());
 		vPromedio = atoi(vProm.c_str());
+		peso = (distancia/vPromedio);
+		cout << "peso : " << peso << "  distancia : " << distancia << "  promedio : " << vPromedio << endl;
 	}
 
 };
 
+
+//Prueba
+struct cmp {
+	bool operator() (const Arco2 &a, const Arco2 &b) {
+		return a.second > b.second;
+	}
+};
+//
 
 
 class Procesar :Fl_Input
@@ -68,6 +83,13 @@ public:
 	vector<Linea*>dibujosA;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
+	vector<Arco2> ady[MAX]; 
+	float distancia[MAX];      
+	bool visitado[MAX]; 
+	float previo[MAX];
+	priority_queue< Arco2, vector<Arco2>, cmp > Q;
+	vector<int> padres;
+	vector<int> aIluminarSpt;
 	string nArchivo;
 	Fl_Box *box;
 	Fl_Box *box1;
@@ -84,6 +106,69 @@ public:
 	void mostrar();
 	void abrir();
 	void mostrarArcos();
+
+
+	//función de inicialización
+	void init() {
+		for (int i = 0; i <= nodos.size(); ++i) {
+			distancia[i] = INF;  //inicializamos todas las distancias con valor infinito
+			visitado[i] = false; //inicializamos todos los vértices como no visitados
+			previo[i] = -1;      //inicializamos el previo del vertice i con -1
+		}
+	}
+
+	//Paso de relajacion
+	void relajacion(int actual, int adyacente, float peso) {
+		cout << "dIST ACTUAL" << distancia[actual] + peso << " , " << distancia[adyacente] << endl;
+		//Si la distancia del origen al vertice actual + peso de su arista es menor a la distancia del origen al vertice adyacente
+		if (distancia[actual] + peso < distancia[adyacente]) {
+			distancia[adyacente] = distancia[actual] + peso;  //relajamos el vertice actualizando la distancia
+			previo[adyacente] = actual;                         //a su vez actualizamos el vertice previo
+			Q.push(Arco2(adyacente, distancia[adyacente])); //agregamos adyacente a la cola de prioridad
+		}
+	}
+
+	//Impresion del camino mas corto desde el vertice inicial y final ingresados
+	void arrPadres(int destino) {
+		if (previo[destino] != -1)    //si aun poseo un vertice previo
+			arrPadres(previo[destino]);  //recursivamente sigo explorando
+		printf("%d ", destino);        //terminada la recursion imprimo los vertices recorridos
+		padres.push_back(destino);
+	}
+
+	void mSPT(int inicial) {
+		init(); //inicializamos nuestros arreglos
+		
+		Q.push(Arco2(inicial, 0)); //Insertamos el vértice inicial en la Cola de Prioridad
+		distancia[inicial] = 0;      //Este paso es importante, inicializamos la distancia del inicial como 0
+		int actual, adyacente;
+		float peso;
+		while (!Q.empty()) {  
+			cout << "AQUI" << endl;//Mientras cola no este vacia
+			actual = Q.top().first;            //Obtengo de la cola el nodo con menor peso, en un comienzo será el inicial
+			Q.pop();                           //Sacamos el elemento de la cola
+			if (visitado[actual]) continue; //Si el vértice actual ya fue visitado entonces sigo sacando elementos de la cola
+			visitado[actual] = true;         //Marco como visitado el vértice actual
+
+			for (int i = 0; i < ady[actual].size(); ++i) { //reviso sus adyacentes del vertice actual
+				
+				adyacente = ady[actual][i].first;   //id del vertice adyacente
+				cout << "AQUI :" <<actual<< endl;
+				cout << "AQUI :" <<adyacente << endl;
+				peso = ady[actual][i].second;        //peso de la arista que une actual con adyacente ( actual , adyacente )
+				cout << "Peso" << peso << endl;
+				if (!visitado[adyacente]) {        //si el vertice adyacente no fue visitado
+					relajacion(actual, adyacente, peso); //realizamos el paso de relajacion
+				}
+			}
+		}
+		printf("Distancias mas cortas iniciando en vertice %d\n", inicial);
+		for (int i = 0; i <= nodos.size(); ++i) {
+			printf("Vertice %d , distancia mas corta = %f\n", i, distancia[i]);
+		}
+
+
+	}
 	void leerTexto() {
 		//Limpia el espacio de entrada
 		string instruccion = this->value();
@@ -168,6 +253,9 @@ public:
 				cout << "LLego un to" << endl;
 
 				string rInstruccion = instruccion.substr(3, instruccion.size());
+				int destino = std::atoi(rInstruccion.c_str());
+				arrPadres(destino);
+				printf("Que cagada\n");
 
 				//**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
@@ -182,6 +270,14 @@ public:
 				cout << "LLego un spt " << endl;
 
 				string rInstruccion = instruccion.substr(4, instruccion.size());
+				int inicial = std::atoi(rInstruccion.c_str());
+
+				for (int i = 0; i < arcos.size(); i++) {
+					ady[arcos[i].origen].push_back(Arco2(arcos[i].destino, arcos[i].peso));
+				}
+
+				mSPT(inicial);
+
 
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
@@ -318,6 +414,9 @@ public:
 				this->crearVRT(nombArchivo);
 				this->crearARC(nombArchivo);
 				dibujaGrafo();
+				for (int i = 0; i < arcos.size(); i++) {
+					cout << "Pesoooooooooooo:" << arcos[i].peso << endl;
+				}
 				////**** Esto despues de hacer la instruccion si y solo si es valida ****//
 				instruccion = instruccion + "\n";
 				const char * inst = instruccion.data();
@@ -439,13 +538,14 @@ void Procesar::importarArchivo(string nombre) //Carga los vertices y arcos del .
 			getline(archivo, vMax, ',');
 			getline(archivo, vProm, '\n');
 			Arco a(origen, dest, dist, vMax, vProm);
+			a.peso = a.distancia / a.vPromedio;
 			arcos.push_back(a);
 			//k++; CUIDADO
-			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << endl;
+
+			cout << "Arco " << k++ << " origen: " << origen << " destino: " << dest << " distancia: " << dist << " velocidad Max: " << vMax << " promedio: " << vProm << " peso : "<< a.peso << endl;
 		}
 		c++;
 	}
-
 	contarArcos(arcos.size(), nodos.size());
 }
 void Procesar::contarArcos(int N, int K) //Calcula grado de entrada y salida

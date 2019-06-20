@@ -253,12 +253,30 @@ public:
 				dibujosA.pop_back();
 			}
 
+			if (allRect.size() > 0) {
+				ventana->remove(allRect[allRect.size() - 1]);
+				for (int i = 0; i < allRect.size(); i++) {
+					allRect.pop_back();
+				}
+				//allRect.pop_back();
+				ventana->redraw();
+			}
+
 			dibujaGrafo();
 			ventana->redraw();
+			
 		}
 		else if (instruccion == "close") {
 			inicial = -1;
 			archAbierto = false;
+			if (allRect.size() > 0) {
+				ventana->remove(allRect[allRect.size() - 1]);
+				for (int i = 0; i < allRect.size(); i++) {
+					allRect.pop_back();
+				}
+				//allRect.pop_back();
+				ventana->redraw();
+			}
 			if (dibujosN.size() > 0 && nodos.size() > 0) {
 				for (int i = dibujosN.size() - 1; i > 0; i--) {
 					//cout << "Borrando " << i << endl;
@@ -305,12 +323,21 @@ public:
 			string sinstruccion5 = instruccion.substr(0, 5);
 			string sinstruccion7 = instruccion.substr(0, 7);
 			
-			if (sinstruccion == "to ") {
+			if (sinstruccion == "to ") {//-----------------------------------------------------------------------------**********************to********************--//
 
 				string rInstruccion = instruccion.substr(3, instruccion.size());
 				int destino = std::atoi(rInstruccion.c_str());
 				if (archAbierto == true) {
 					if (inicial != -1 && inicial != destino) {
+
+						if (allRect.size() > 0) {
+							ventana->remove(allRect[allRect.size() - 1]);
+							for (int i = 0; i < allRect.size(); i++) {
+								allRect.pop_back();
+							}
+							//allRect.pop_back();
+							ventana->redraw();
+						}
 
 						if (padres.size() > 0) {
 							for (int i = 0; i < padres.size(); i++) {
@@ -423,12 +450,20 @@ public:
 					////*********************************************************************//
 				}
 			}
-			else if (sinstruccion4 == "toa ") {
+			else if (sinstruccion4 == "toa ") {//-----------------------------------------------------------------------------**********************toa********************--//
 				string rInstruccion = instruccion.substr(3, instruccion.size());
 				int destino = std::atoi(rInstruccion.c_str());
 				if (archAbierto == true) {
 					if (inicial != -1 && inicial != destino) {
 
+						if (allRect.size() > 0) {
+							ventana->remove(allRect[allRect.size() - 1]);
+							//for (int i = 0; i < allRect.size(); i++) {
+							//	allRect.pop_back();
+							//}
+							//allRect.pop_back();
+							ventana->redraw();
+						}
 						if (padres.size() > 0) {
 							for (int i = 0; i < padres.size(); i++) {
 								padres.pop_back();
@@ -510,9 +545,9 @@ public:
 								}
 								//xy entrada y salida----------------//
 								int cantNodos = (abs(xllegada - xsalida) + abs(yllegada - ysalida))/6;
-								cantNodos += 5;
-								float constantex = ((abs(xllegada - xsalida)) / cantNodos);
-								float constantey = ((abs(yllegada - ysalida)) / cantNodos);
+								cantNodos += 2;
+								float constantex = ((abs(xllegada - xsalida)) / ((abs(xllegada - xsalida) + abs(yllegada - ysalida)) / 6));
+								float constantey = ((abs(yllegada - ysalida)) / ((abs(xllegada - xsalida) + abs(yllegada - ysalida)) / 6));
 								//y iguales
 								if ((xllegada < xsalida) && ysalida == yllegada) {
 									for (int i = 0; i < cantNodos; ++i) {
@@ -559,10 +594,6 @@ public:
 								}
 								Fl::add_timeout(2, winUpdate, ventana);
 							}
-
-							//carrito = new Carrito(xS, yS, 1, 1);
-
-
 
 							//**** Esto despues de hacer la instruccion si y solo si es valida ****//
 							instruccion = "--> " + instruccion + "\n";
@@ -617,11 +648,21 @@ public:
 
 			}
 			
-			else if (sinstruccion4 == "spt ") {
+			else if (sinstruccion4 == "spt ") {//-----------------------------------------------------------------------------**********************spt********************--//
 				string rInstruccion = instruccion.substr(4, instruccion.size());
 				inicial = std::atoi(rInstruccion.c_str());
 				if (archAbierto == true) {
 				//--------------Limpiar a iluminar ---------------//
+					
+					//if (allRect.size() > 0) {
+					//	ventana->remove(allRect[allRect.size() - 1]);
+					//	for (int i = 0; i < allRect.size(); i++) {
+					//		allRect.pop_back();
+					//	}
+					//	//allRect.pop_back();
+					//	ventana->redraw();
+					//}
+
 					if (aIluminarSpt.size() > 0) {
 						for (int i = 0; i < aIluminarSpt.size(); i++) {
 							aIluminarSpt.pop_back();
@@ -701,6 +742,15 @@ public:
 			else if (sinstruccion5 == "node ") {
 				string nNodo = instruccion.substr(5, instruccion.size());
 				int number = std::atoi(nNodo.c_str());
+
+				if (allRect.size() > 0) {
+					ventana->remove(allRect[allRect.size() - 1]);
+					for (int i = 0; i < allRect.size(); i++) {
+						allRect.pop_back();
+					}
+					//allRect.pop_back();
+					ventana->redraw();
+				}
 
 				if (number < dibujosN.size()) {
 					ventana->remove(dibujosN[number]);

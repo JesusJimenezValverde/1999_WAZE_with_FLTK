@@ -832,8 +832,7 @@ public:
 			else if (sinstruccion5 == "open ") {
 				/*cout << "Llego un open" << endl;*/
 
-				inicial = -1;
-
+				
 				string nombArchivo = instruccion.substr(6);
 				nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 1);
 				cout << "Open: " << nombArchivo<<endl;
@@ -858,6 +857,43 @@ public:
 					archivo2.close();
 					mensaje = "Los archivos .VRT y .ARC se abrieron exitosamente.\n";
 					archAbierto = true;
+					//Improvisando un close de lo que haya abierto ---------------------//
+					inicial = -1;
+					if (allRect.size() > 0) {
+						ventana->remove(allRect[allRect.size() - 1]);
+						for (int i = 0; i < allRect.size(); i++) {
+							allRect.pop_back();
+						}
+						//allRect.pop_back();
+						ventana->redraw();
+					}
+					if (dibujosN.size() > 0 && nodos.size() > 0) {
+						for (int i = dibujosN.size() - 1; i > 0; i--) {
+							//cout << "Borrando " << i << endl;
+							ventana->remove(dibujosN[i]);
+							dibujosN.pop_back();
+							nodos.pop_back();
+						}
+						ventana->remove(dibujosN[0]);
+						dibujosN.pop_back();
+						nodos.pop_back();
+						if (dibujosA.size() > 0 && arcos.size() > 0) {
+							for (int i = dibujosA.size() - 1; i > 0; i--) {
+								//cout << "Borrando " << i << endl;
+								ventana->remove(dibujosA[i]);
+								dibujosA.pop_back();
+								arcos.pop_back();
+							}
+							ventana->remove(dibujosA[0]);
+							dibujosA.pop_back();
+							arcos.pop_back();
+						}
+						tbuff->text("--- Red Cerrada ---\n");
+						salidas->buffer(tbuff);
+
+						ventana->redraw();
+					}
+					//------------------------------------------------------------------------------//
 					tbuff->append(mensaje.data());
 					salidas->buffer(tbuff);
 
@@ -937,6 +973,46 @@ public:
 					prueba.open(nombArchivo,ios::binary);
 					if (!prueba.fail()) {
 						prueba.close();
+
+						//Improvisando un close de lo que haya abierto ---------------------//
+						inicial = -1;
+						if (allRect.size() > 0) {
+							ventana->remove(allRect[allRect.size() - 1]);
+							for (int i = 0; i < allRect.size(); i++) {
+								allRect.pop_back();
+							}
+							//allRect.pop_back();
+							ventana->redraw();
+						}
+						if (dibujosN.size() > 0 && nodos.size() > 0) {
+							for (int i = dibujosN.size() - 1; i > 0; i--) {
+								//cout << "Borrando " << i << endl;
+								ventana->remove(dibujosN[i]);
+								dibujosN.pop_back();
+								nodos.pop_back();
+							}
+							ventana->remove(dibujosN[0]);
+							dibujosN.pop_back();
+							nodos.pop_back();
+							if (dibujosA.size() > 0 && arcos.size() > 0) {
+								for (int i = dibujosA.size() - 1; i > 0; i--) {
+									//cout << "Borrando " << i << endl;
+									ventana->remove(dibujosA[i]);
+									dibujosA.pop_back();
+									arcos.pop_back();
+								}
+								ventana->remove(dibujosA[0]);
+								dibujosA.pop_back();
+								arcos.pop_back();
+							}
+							tbuff->text("--- Red Cerrada ---\n");
+							salidas->buffer(tbuff);
+
+							ventana->redraw();
+						}
+						//------------------------------------------------------------------------------//
+
+
 						this->importarArchivo(nombArchivo);
 						nombArchivo = nombArchivo.substr(0, nombArchivo.size() - 4);
 						cout << "Se ha abierto la ciudad: '" << nombArchivo << "'" << endl;

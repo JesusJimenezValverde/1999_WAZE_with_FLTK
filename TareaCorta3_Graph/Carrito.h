@@ -25,9 +25,12 @@ public:
 	void draw() {
 		int cx = x();
 		int cy = y();
+		fl_draw_box(FL_SHADOW_BOX,cx,cy,43,25,FL_YELLOW);
+		fl_draw_box(FL_FLAT_BOX, cx+17, cy+7, 9, 9, FL_CYAN);
 		fl_line_style(FL_SOLID, 4);
-		fl_color(FL_DARK_RED);
-		fl_pie(cx, cy, 24, 24, 0, 360);
+		fl_color(FL_BLACK);
+		fl_pie(cx, cy+20, 13, 13, 0, 360);
+		fl_pie(cx+25, cy + 20, 13, 13, 0, 360);
 		//fl_circle(cx, cy, 12);
 
 

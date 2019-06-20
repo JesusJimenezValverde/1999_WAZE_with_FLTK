@@ -331,11 +331,7 @@ public:
 					if (inicial != -1 && inicial != destino) {
 
 						if (allRect.size() > 0) {
-							ventana->remove(allRect[allRect.size() - 1]);
-							for (int i = 0; i < allRect.size(); i++) {
-								allRect.pop_back();
-							}
-							//allRect.pop_back();
+							ventana->remove(allRect[allRect.size() - 1]);;
 							ventana->redraw();
 						}
 
@@ -551,7 +547,7 @@ public:
 								//y iguales
 								if ((xllegada < xsalida) && ysalida == yllegada) {
 									for (int i = 0; i < cantNodos; ++i) {
-										allRect.push_back(new Carrito(xsalida-(i*constantex),ysalida,0,0));
+										allRect.push_back(new Carrito(xsalida-(i*constantex),ysalida,0,0,"TAXI"));
 									}
 								}
 								if ((xllegada > xsalida) && ysalida == yllegada) {
@@ -653,7 +649,6 @@ public:
 				inicial = std::atoi(rInstruccion.c_str());
 				if (archAbierto == true) {
 				//--------------Limpiar a iluminar ---------------//
-					
 					//if (allRect.size() > 0) {
 					//	ventana->remove(allRect[allRect.size() - 1]);
 					//	for (int i = 0; i < allRect.size(); i++) {
@@ -662,7 +657,6 @@ public:
 					//	//allRect.pop_back();
 					//	ventana->redraw();
 					//}
-
 					if (aIluminarSpt.size() > 0) {
 						for (int i = 0; i < aIluminarSpt.size(); i++) {
 							aIluminarSpt.pop_back();
@@ -784,7 +778,10 @@ public:
 			}
 			else if (sinstruccion5 == "arcs ") {
 				cout << "LLego un arcs " << endl;
-
+				if (allRect.size() > 0) {
+					ventana->remove(allRect[allRect.size() - 1]);
+					ventana->redraw();
+				}
 				string nArcs = instruccion.substr(5, instruccion.size());
 				int nprincipal = atoi(nArcs.c_str());
 				if (nprincipal < dibujosN.size()) {
@@ -796,9 +793,21 @@ public:
 							ventana->add(dibujosA[i]);
 						}
 						else {
-							dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
-								nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
-							ventana->add(dibujosA[i]);
+							if (arcos[i].vPromedio<=25) {
+								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1);
+								ventana->add(dibujosA[i]);
+							}
+							else if ((25 < arcos[i].vPromedio) && (arcos[i].vPromedio <= 50)) {
+								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 3);
+								ventana->add(dibujosA[i]);
+							}
+							else{
+								dibujosA[i] = new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+									nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 4);
+								ventana->add(dibujosA[i]);
+							}
 						}
 					}
 					ventana->redraw();
@@ -1017,15 +1026,23 @@ public:
 			ventana->remove(dibujosN[0]);
 			dibujosN.pop_back();
 		}
-		cout << "\n\n PEPEPE " << nodos.size() << endl;
 		for (int i = 0; i < nodos.size(); i++) {
 			dibujosN.push_back(new DrawNodo(nodos[i].x + 300, nodos[i].y,1,1));
 			ventana->add(dibujosN[i]);
 		}
-		cout <<"\n\n BLA BLA "<< arcos.size() << endl;
 		for (int i = 0; i < arcos.size(); i++) {
-			dibujosA.push_back(new Linea(nodos[arcos[i].origen].x+300,nodos[arcos[i].origen].y, 
-				nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y,1));
+			if (arcos[i].vPromedio<=25) {
+				dibujosA.push_back(new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+					nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 1));
+			}
+			else if ((25<arcos[i].vPromedio) && (arcos[i].vPromedio <=50)) {
+				dibujosA.push_back(new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+					nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 3));
+			}
+			else {
+				dibujosA.push_back(new Linea(nodos[arcos[i].origen].x + 300, nodos[arcos[i].origen].y,
+					nodos[arcos[i].destino].x + 300, nodos[arcos[i].destino].y, 4));
+			}
 			ventana->add(dibujosA[i]);
 		}
 		ventana->redraw();

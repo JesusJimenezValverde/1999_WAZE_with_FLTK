@@ -24,7 +24,6 @@
 #include <string>
 #include "Procesar.h"
 #include "string.h" 
-//#include "bits/stdc++.h"
 
 int main(int argc, char **argv) {
 
@@ -35,21 +34,9 @@ int main(int argc, char **argv) {
 
 	ventana->show();
 	return Fl::run();
-
-	//ArchivoDirecto<BTreePage>arch = { "tec.ARC" };
-	//for (int i = 0; i < 5; i++) {
-	//	cout << "Pagina " << i + 1 << "\n\n";
-	//	BTreePage a =arch.leer(i);
-	//	a.showKeys();
-	//}
 	
 	return 0;
 }
-
-
-
-
-
 
 //fuck my life//
 

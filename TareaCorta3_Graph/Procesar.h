@@ -26,6 +26,9 @@
 #include <queue>
 #include "Carrito.h"
 #include "Fl_Tooltip.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Widget.H>
+#include <FL/fl_draw.H>
 
 #define MAX 10000
 #define Arco2 pair< int , float >
@@ -33,6 +36,20 @@
 
 using namespace std;
 
+vector<Carrito*> allRect;
+
+void winUpdate(void *data)
+{
+	static unsigned i = 0;
+	Fl_Window *o = (Fl_Window*)data;
+	if (i < allRect.size()) {
+		o->add(allRect[i]);
+		if (i >= 1) o->remove(allRect[i - 1]);
+		o->redraw();
+		Fl::add_timeout(0.1, winUpdate, data);
+		++i;
+	}
+}
 
 struct Nodo {
 	int nNodo; //Numero de Nodo
@@ -83,6 +100,7 @@ struct par {
 	}
 };
 
+
 class Procesar :Fl_Input
 {
 public:
@@ -93,7 +111,6 @@ public:
 	vector<Linea*>dibujosA;
 	ArchivoDirecto<Nodo>archivoVRT;
 	ArchivoDirecto<BTreePage>archivoARC;
-
 	vector<Arco2> ady[MAX]; 
 	float distancia[MAX];      
 	bool visitado[MAX]; 
@@ -101,12 +118,9 @@ public:
 	priority_queue< Arco2, vector<Arco2>, cmp > Q;
 	vector<int> padres;
 	vector<par> aIluminarSpt;
-
 	Carrito *carrito;
-
 	bool archAbierto = false;
 	int inicial = -1;
-
 	string nArchivo;
 	Fl_Box *box;
 	Fl_Box *box1;
@@ -115,7 +129,6 @@ public:
 	Fl_Window *window;
 	bool ejecutado;
 	Fl_Window * ventana;
-	//Procesar() {}
 	void importarArchivo(string nombre);
 	void contarArcos(int N, int K);
 	void crearVRT(string nombre);
@@ -123,8 +136,6 @@ public:
 	void mostrar();
 	void abrir();
 	void mostrarArcos();
-
-
 	//función de inicialización
 	void init() {
 		for (int i = 0; i <= nodos.size(); ++i) {
@@ -136,7 +147,6 @@ public:
 			previo[i] = -1;
 		}
 	}
-
 	//Paso de relajacion
 	void relajacion(int actual, int adyacente, float peso) {
 		//Si la distancia del origen al vertice actual + peso de su arista es menor a la distancia del origen al vertice adyacente
@@ -149,7 +159,6 @@ public:
 			//aIluminarSpt.push_back(par(actual, adyacente)); //Agregandolo a los arcos que se tienen que iluminar cuando se ilumina spt
 		}
 	}
-
 	//Impresion del camino mas corto desde el vertice inicial y final ingresados
 	void arrPadres(int destino) {
 		if (previo[destino] != -1)    //si aun poseo un vertice previo
@@ -166,7 +175,6 @@ public:
 			padres.push_back(destino);
 		}
 	}
-
 	void fSpt() {
 		if (aIluminarSpt.size() > 0) {
 			for (int i = 0; i < aIluminarSpt.size(); i++) {
@@ -181,7 +189,6 @@ public:
 			}
 		}
 	}
-
 	void mSPT(int inicial) {
 		init(); //inicializamos nuestros arreglos
 		Q.push(Arco2(inicial, 0)); //Insertamos el vértice inicial en la Cola de Prioridad
@@ -214,6 +221,8 @@ public:
 		//	}
 		//}
 	}
+	
+
 	void leerTexto() {
 		//Limpia el espacio de entrada
 		string instruccion = this->value();
@@ -481,20 +490,75 @@ public:
 							ventana->redraw();
 
 							//------------Funcion que hace que se mueva-------------//
-							for (int i = 0; i < padres.size() - 1; i++) {
-								int xS, yS, xLL, yLL; //xyS son las coordenadas de salida// xyLL son las direcciones de llegada
+							
+							for (int i = 0; i < aIluminarSpt.size(); i++) {
+								cout << "Salida: " << aIluminarSpt[i].salida << "Llegada: " << aIluminarSpt[i].llegada << endl;
+								//xy entrada y salida----------------//
+								int xsalida = 0;
+								int ysalida = 0;
+								int xllegada = 0;
+								int yllegada = 0;
 								for (int j = 0; j < nodos.size(); j++) {
-									if (nodos[j].nNodo == padres[i]) {
-										xS = nodos[j].x;
-										yS = nodos[j].y;
+									if (nodos[j].nNodo == aIluminarSpt[i].salida) {
+										xsalida = nodos[j].x + 300;
+										ysalida = nodos[j].y;
 									}
-									if (nodos[j].nNodo == padres[i + 1]) {
-										xLL = nodos[j].x;
-										yLL = nodos[j].y;
+									if (nodos[j].nNodo == aIluminarSpt[i].llegada) {
+										xllegada = nodos[j].x+300;
+										yllegada = nodos[j].y;
 									}
 								}
-								
+								//xy entrada y salida----------------//
+								int cantNodos = (abs(xllegada - xsalida) + abs(yllegada - ysalida))/6;
+								int constantex = ((abs(xllegada - xsalida)) / cantNodos);
+								int constantey = ((abs(yllegada - ysalida)) / cantNodos);
+								//y iguales
+								if ((xllegada < xsalida) && ysalida == yllegada) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida-(i*constantex),ysalida,0,0));
+									}
+								}
+								if ((xllegada > xsalida) && ysalida == yllegada) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida + (i*constantex), ysalida, 0, 0));
+									}
+								}
+								//x iguales
+								if ((xllegada == xsalida) && (ysalida < yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida, ysalida + (i*constantey), 0, 0));
+									}
+								}
+								if ((xllegada == xsalida) && (ysalida > yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida, ysalida - (i*constantey), 0, 0));
+									}
+								}
+								//arriba
+								if ((xllegada > xsalida) && (ysalida > yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida + (i*constantex), ysalida - (i*constantey), 0, 0));
+									}
+								}
+								if ((xllegada < xsalida) && (ysalida > yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida - (i*constantex), ysalida - (i*constantey), 0, 0));
+									}
+								}
+								//abajo
+								if ((xllegada > xsalida) && (ysalida < yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida + (i*constantex), ysalida + (i*constantey), 0, 0));
+									}
+								}
+								if ((xllegada < xsalida) && (ysalida < yllegada)) {
+									for (int i = 0; i < cantNodos; ++i) {
+										allRect.push_back(new Carrito(xsalida - (i*constantex), ysalida + (i*constantey), 0, 0));
+									}
+								}
+								Fl::add_timeout(2, winUpdate, ventana);
 							}
+
 							//carrito = new Carrito(xS, yS, 1, 1);
 
 

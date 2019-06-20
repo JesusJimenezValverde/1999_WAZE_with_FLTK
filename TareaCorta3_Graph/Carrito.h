@@ -25,8 +25,11 @@ public:
 	void draw() {
 		int cx = x();
 		int cy = y();
-		fl_color(FL_GREEN);
-		fl_circle(cx, cy, 12);
+		fl_line_style(FL_SOLID, 4);
+		fl_color(FL_DARK_RED);
+		fl_pie(cx, cy, 24, 24, 0, 360);
+		//fl_circle(cx, cy, 12);
+
 
 	}
 

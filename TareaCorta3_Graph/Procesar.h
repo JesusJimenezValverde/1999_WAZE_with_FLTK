@@ -510,8 +510,9 @@ public:
 								}
 								//xy entrada y salida----------------//
 								int cantNodos = (abs(xllegada - xsalida) + abs(yllegada - ysalida))/6;
-								int constantex = ((abs(xllegada - xsalida)) / cantNodos);
-								int constantey = ((abs(yllegada - ysalida)) / cantNodos);
+								cantNodos += 5;
+								float constantex = ((abs(xllegada - xsalida)) / cantNodos);
+								float constantey = ((abs(yllegada - ysalida)) / cantNodos);
 								//y iguales
 								if ((xllegada < xsalida) && ysalida == yllegada) {
 									for (int i = 0; i < cantNodos; ++i) {
